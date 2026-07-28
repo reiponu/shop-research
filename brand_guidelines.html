@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>カキイレ ブランドガイドライン v4.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sumi:#292420; --ai:#3D6BAD; --shu:#DE5626; --usubeni:#E9A090;
+    --kinari:#F7F3EA; --yozumi:#171310; --line:#E8E0D2; --panel:#FFFDF8;
+    --mid:#6A6255; --mid2:#99907F;
+    --nezu:#99907F; --kohaku:#B97B1F; --tokiwa:#1E7A5A; --hi:#BF3D2B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:"Noto Sans JP","Yu Gothic","游ゴシック","Meiryo",sans-serif;
+    background:var(--kinari); color:var(--sumi);
+    font-size:16px; line-height:1.85; letter-spacing:.02em;
+    font-feature-settings:"palt";
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:48px 22px 80px;}
+
+  /* ===== ヘッダー ===== */
+  .meta-row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    font-size:12.5px;letter-spacing:.24em;color:var(--mid2);font-weight:500;}
+  .logo{margin-top:40px;font-weight:900;line-height:1.05;
+    font-size:clamp(58px,12vw,104px);letter-spacing:.02em;}
+  .logo .br{color:var(--shu);}
+  .latin{margin-top:14px;font-size:15px;letter-spacing:.44em;color:var(--mid2);font-weight:500;}
+  .tagline{margin-top:30px;font-size:clamp(19px,4.6vw,26px);font-weight:700;letter-spacing:.05em;}
+  .tagline .br{color:var(--shu);font-weight:900;}
+  .lede{margin-top:14px;color:var(--mid);font-size:16px;max-width:44em;}
+  .shu-rule{width:56px;height:3px;border-radius:3px;background:var(--shu);margin:34px 0 0;}
+
+  /* ===== 目次 ===== */
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px;}
+  .toc a{display:inline-block;text-decoration:none;color:var(--ai);font-size:13.5px;font-weight:500;
+    border:1px solid var(--line);background:var(--panel);border-radius:999px;
+    padding:6px 14px;letter-spacing:.04em;}
+  .toc a:hover{border-color:var(--ai);}
+
+  /* ===== セクション共通 ===== */
+  section{margin-top:72px;}
+  .sec-no{font-size:12.5px;letter-spacing:.3em;color:var(--mid2);font-weight:700;}
+  h2{font-size:clamp(22px,5vw,28px);font-weight:700;letter-spacing:.04em;margin-top:8px;}
+  h2::after{content:"";display:block;width:44px;height:3px;border-radius:3px;background:var(--shu);margin-top:14px;}
+  .sec-lede{margin-top:18px;color:var(--mid);max-width:44em;}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 2px 10px rgba(41,36,32,.05);padding:24px 26px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:24px;}
+  @media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  .ev{display:inline-block;vertical-align:2px;margin-left:8px;
+    font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--mid2);
+    border:1px solid var(--line);border-radius:4px;padding:1px 7px;white-space:nowrap;}
+
+  /* ===== 01 核 ===== */
+  .meaning{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:24px;}
+  @media(max-width:720px){.meaning{grid-template-columns:1fr;}}
+  .meaning .m{padding:20px 22px;}
+  .meaning b{display:block;font-size:18px;font-weight:700;margin-bottom:6px;}
+  .meaning span{font-size:14.5px;color:var(--mid);line-height:1.75;display:block;}
+
+  /* ===== 02 コンセプト ===== */
+  .concept-line{margin-top:26px;font-size:clamp(24px,6vw,36px);font-weight:700;letter-spacing:.06em;}
+  .concept-line .br{color:var(--shu);font-weight:900;}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px;}
+  @media(max-width:720px){.duo{grid-template-columns:1fr;}}
+  .duo .d b{display:block;font-size:17px;margin-bottom:6px;}
+  .duo .d span{font-size:14.5px;color:var(--mid);line-height:1.75;}
+
+  /* ===== 03 流れ ===== */
+  .flow{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:26px;}
+  .flow .step{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:10px 16px;font-size:14.5px;font-weight:700;letter-spacing:.03em;box-shadow:0 2px 10px rgba(41,36,32,.04);}
+  .flow .step small{display:block;font-weight:500;font-size:12px;color:var(--mid2);letter-spacing:.06em;}
+  .flow .arw{color:var(--mid2);font-weight:700;}
+  .readers{margin-top:22px;font-size:15px;color:var(--mid);}
+  .readers b{color:var(--sumi);}
+
+  /* ===== 04 Tone ===== */
+  .tone{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px;}
+  @media(max-width:720px){.tone{grid-template-columns:1fr;}}
+  .tone .t{padding:22px 24px;}
+  .tone .w{font-size:30px;font-weight:900;letter-spacing:.08em;}
+  .tone .c{margin-top:8px;font-size:14.5px;color:var(--mid);line-height:1.75;}
+
+  /* ===== 05 NG ===== */
+  .ng{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px;}
+  @media(max-width:720px){.ng{grid-template-columns:1fr;}}
+  .ng .n{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;}
+  .ng .x{flex:none;width:26px;height:26px;border:1.5px solid var(--mid2);border-radius:6px;
+    color:var(--mid2);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+  .ng b{display:block;font-size:15.5px;}
+  .ng span{font-size:13.5px;color:var(--mid);line-height:1.7;}
+  .ban{margin-top:16px;font-size:13.5px;color:var(--mid);}
+
+  /* ===== 06 ロゴ ===== */
+  .logospec{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:26px;}
+  @media(max-width:720px){.logospec{grid-template-columns:1fr;}}
+  .logobox{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:42px 20px;text-align:center;}
+  .logobox .lg{font-weight:900;font-size:clamp(40px,9vw,58px);letter-spacing:.02em;line-height:1.1;}
+  .logobox .lg .br{color:var(--shu);}
+  .logobox .lt{margin-top:10px;font-size:12px;letter-spacing:.4em;color:var(--mid2);font-weight:500;}
+  .logobox.dark{background:var(--yozumi);border-color:var(--yozumi);}
+  .logobox.dark .lg{color:var(--kinari);}
+  .logobox.dark .lt{color:#8d857a;}
+  .logocap{font-size:13px;color:var(--mid2);margin-top:10px;text-align:center;letter-spacing:.04em;}
+  .logonote{margin-top:18px;font-size:14.5px;color:var(--mid);}
+
+  /* ===== 07 色 ===== */
+  .pal{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:26px;}
+  @media(max-width:820px){.pal{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:540px){.pal{grid-template-columns:repeat(2,1fr);}}
+  .chip .sw{height:72px;border-radius:12px;box-shadow:0 2px 10px rgba(41,36,32,.05);}
+  .chip .nm{margin-top:10px;font-size:15px;font-weight:700;letter-spacing:.06em;}
+  .chip .nm i{font-style:normal;font-size:10.5px;color:var(--mid2);font-weight:500;letter-spacing:.1em;margin-left:6px;}
+  .chip .hex{font-size:12.5px;color:var(--mid2);font-variant-numeric:tabular-nums;margin-top:2px;}
+  .chip .role{font-size:12px;color:var(--mid);margin-top:4px;line-height:1.6;}
+  .subpal{margin-top:22px;font-size:14px;color:var(--mid);}
+  .subpal b{color:var(--sumi);}
+  .states{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+  .stamp{font-size:13px;font-weight:700;letter-spacing:.08em;border:1.5px solid;border-radius:4px;
+    padding:4px 12px;background:var(--panel);}
+
+  /* ===== 08 タイポ ===== */
+  .typo{margin-top:26px;padding:26px 28px;}
+  .typo .row{display:grid;grid-template-columns:180px 1fr;gap:8px 24px;align-items:baseline;padding:14px 0;border-top:1px solid var(--line);}
+  .typo .row:first-child{border-top:none;padding-top:0;}
+  @media(max-width:720px){.typo .row{grid-template-columns:1fr;}}
+  .typo .k{font-size:12.5px;color:var(--mid2);font-weight:500;letter-spacing:.06em;}
+  .typo .h{font-size:clamp(24px,5vw,34px);font-weight:700;letter-spacing:.04em;}
+  .typo .b{font-size:16px;color:var(--mid);}
+  .typo .n{font-size:clamp(20px,4.6vw,28px);font-weight:700;font-variant-numeric:tabular-nums;}
+  .typo .n em{font-style:normal;color:var(--shu);}
+  .typonote{margin-top:16px;font-size:13.5px;color:var(--mid2);line-height:1.8;}
+
+  /* ===== 09 ダイヤル ===== */
+  .dials{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:26px;}
+  @media(max-width:820px){.dials{grid-template-columns:1fr;}}
+  .dial{padding:22px 24px;display:flex;flex-direction:column;gap:0;}
+  .dial .name{font-size:19px;font-weight:700;letter-spacing:.06em;}
+  .dial .role{font-size:13px;color:var(--mid2);margin-top:2px;}
+  .dial .temp{margin:14px 0 4px;font-size:14px;font-weight:700;letter-spacing:.1em;color:var(--ai);}
+  .dial .dots{letter-spacing:.18em;margin-left:8px;}
+  .dial dl{margin-top:10px;}
+  .dial dt{font-size:11.5px;letter-spacing:.14em;color:var(--mid2);font-weight:700;margin-top:12px;}
+  .dial dd{font-size:14px;color:var(--mid);line-height:1.7;margin-top:2px;}
+  .dial dd b{color:var(--sumi);}
+  .dialnote{margin-top:18px;font-size:14.5px;color:var(--mid);}
+
+  /* ===== 10 言葉 ===== */
+  .words{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px;}
+  @media(max-width:720px){.words{grid-template-columns:1fr;}}
+  .words .w{padding:18px 20px;}
+  .words .no{font-size:13px;color:var(--mid2);font-weight:500;}
+  .words .no s{text-decoration-color:var(--mid2);}
+  .words .yes{font-size:15.5px;font-weight:700;margin-top:6px;}
+  .quote{margin-top:24px;text-align:center;font-size:clamp(18px,4.6vw,24px);font-weight:700;letter-spacing:.04em;}
+  .quote .br{color:var(--shu);font-weight:900;}
+  .quote small{display:block;margin-top:8px;font-size:12.5px;color:var(--mid2);font-weight:500;letter-spacing:.1em;}
+  .vocab{margin-top:22px;font-size:15px;color:var(--mid);}
+  .vocab b{color:var(--sumi);background:linear-gradient(transparent 68%, rgba(233,160,144,.45) 68%);}
+
+  /* ===== 11 AI指示 ===== */
+  .prompt{margin-top:22px;padding:20px 22px;font-size:14px;color:var(--mid);line-height:1.9;}
+  .prompt b{display:block;color:var(--sumi);font-size:15px;margin-bottom:8px;}
+
+  /* ===== フッター ===== */
+  footer{margin-top:80px;padding-top:20px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    font-size:12px;color:var(--mid2);letter-spacing:.1em;}
+
+  @media print{
+    body{background:#fff;}
+    .toc{display:none;}
+    section{margin-top:44px;}
+    .card,.dial,.typo{box-shadow:none;break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="meta-row">
+    <div>KAKIIRE — BRAND GUIDELINES</div>
+    <div>v4.0 ／ 2026.07.28</div>
+  </div>
+
+  <div class="logo"><span class="br">「</span>カキイレ<span class="br">」</span></div>
+  <div class="latin">K A K I I R E</div>
+  <div class="tagline"><span class="br">「</span>写メ日記で、店の書き入れ時をつくる。<span class="br">」</span></div>
+  <p class="lede">店舗向け 写メ日記自動生成・予約投稿ツールのブランド規定。LP・営業資料・アプリの見た目と言葉は、すべてこの1冊から出発する。</p>
+  <div class="shu-rule"></div>
+
+  <nav class="toc">
+    <a href="#s1">核</a><a href="#s2">コンセプト</a><a href="#s3">読者と場所</a><a href="#s4">Tone</a><a href="#s5">避ける印象</a><a href="#s6">ロゴ</a><a href="#s7">色</a><a href="#s8">文字</a><a href="#s9">接点別ダイヤル</a><a href="#s10">言葉</a><a href="#s11">AI指示文</a>
+  </nav>
+
+  <!-- 01 -->
+  <section id="s1">
+    <div class="sec-no">01 — CORE</div>
+    <h2>ブランドの核</h2>
+    <p class="sec-lede">名前は三重の意味を持つ。この掛け言葉がブランドの背骨。</p>
+    <div class="meaning">
+      <div class="m card"><b>書き入れる</b><span>日記を書き入れる。毎日の投稿を、店の仕事として回す。</span></div>
+      <div class="m card"><b>書き入れ時</b><span>繁盛期をつくる。目的は日記ではなく、店の景気。</span></div>
+      <div class="m card"><b>朱を入れる</b><span>校正して仕上げる。品質チェックまでが商品。</span></div>
+    </div>
+    <p class="sec-lede" style="margin-top:24px">立ち位置は、派手なAIスタートアップでも、女性向けのかわいいツールでもなく、<b>夜の商売を昼の顔で手伝う実直な道具</b>。<span class="ev">根拠 D18</span><br>
+    信用が通貨の業界で、<b>カキイレ自身が「堅気で誠実」に見えることが最初の営業</b>。デザインの最優先ジョブはここにある。<span class="ev">根拠 A2–A4</span></p>
+  </section>
+
+  <!-- 02 -->
+  <section id="s2">
+    <div class="sec-no">02 — CONCEPT</div>
+    <h2>ビジュアルコンセプト「やわらか伝票」</h2>
+    <div class="concept-line"><span class="br">「</span>ちゃんと見えて、あったかい。<span class="br">」</span></div>
+    <div class="duo">
+      <div class="d card"><b>骨格＝伝票</b><span>可読・フラット・直線グリッド・数字が主役。業界ITは弱く「普通に見やすい」だけで差がつく。<span class="ev">C15/C16</span></span></div>
+      <div class="d card"><b>温度＝カウンターの内側</b><span>丸み・暖色寄り・共感の言葉。決裁はストーリーと共感で動く。<span class="ev">D20/E21</span></span></div>
+    </div>
+    <p class="sec-lede" style="margin-top:22px">世界観は江戸の商いの色（藍染×朱印×生成りの紙）をモダンな直線レイアウトに載せる。和食屋にしない歯止め：書体はゴシックのみ・和柄／毛筆／家紋モチーフ禁止。</p>
+  </section>
+
+  <!-- 03 -->
+  <section id="s3">
+    <div class="sec-no">03 — AUDIENCE</div>
+    <h2>届けたい相手と、見られる場所</h2>
+    <p class="sec-lede">商談は一本道。同じ人が連続で見るので、接点ごとに見た目が割れてはいけない。<span class="ev">根拠 D19/A7</span></p>
+    <div class="flow">
+      <div class="step">テレアポ・紹介</div><div class="arw">→</div>
+      <div class="step">LP<small>閲覧3分＋フォーム3分</small></div><div class="arw">→</div>
+      <div class="step">営業資料 PDF<small>5分で見せ切る</small></div><div class="arw">→</div>
+      <div class="step">対面・導入</div>
+    </div>
+    <p class="readers"><b>一次読者（決裁）</b>：小規模＝雇われ店長→オーナー、中規模以上＝広告統括担当。現場上がり・30代中盤〜。SNSより<b>店舗スタッフの口コミを重視</b>＝スタッフが上に勧めやすい「難しく見えない」見た目が決裁を通す。<span class="ev">A1/A2</span><br>
+    <b>二次読者</b>：日々操作する内勤・ドライバー（待機時間に触る）、営業資料をリライトして売るアライアンス先。<span class="ev">B8/A7</span><br>
+    <b>見られる場所</b>：ほぼスマホ。紙・PDF・スマホのどれでも崩れないことが前提条件。</p>
+  </section>
+
+  <!-- 04 -->
+  <section id="s4">
+    <div class="sec-no">04 — TONE &amp; MOOD</div>
+    <h2>与える印象・4語</h2>
+    <div class="tone">
+      <div class="t card"><div class="w">誠実</div><div class="c">堅気に見える。騙さない・断言しない。数字と実物で語る。<span class="ev">A3/A4/E23</span></div></div>
+      <div class="t card"><div class="w">手間いらず</div><div class="c">楽・速い・問い合わせがいらない。先回りして手間を消す。<span class="ev">B9/B13</span></div></div>
+      <div class="t card"><div class="w">繁盛</div><div class="c">書き入れ時の熱。明るい商い。暗くしない。<span class="ev">名前/A6</span></div></div>
+      <div class="t card"><div class="w">親身</div><div class="c">キャストと店の味方。福利厚生の温度。説教しない。<span class="ev">E22/D20</span></div></div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section id="s5">
+    <div class="sec-no">05 — NEVER</div>
+    <h2>避ける印象</h2>
+    <p class="sec-lede">この業界の決裁者は「怪しさ」を3秒で判定する。以下は即減点。</p>
+    <div class="ng">
+      <div class="n card"><div class="x">✕</div><div><b>夜ギラ系</b><span>黒×紫×ネオン・金ラメ・ホストクラブ調。「個人向け？」誤読の実績あり。<span class="ev">E21</span></span></div></div>
+      <div class="n card"><div class="x">✕</div><div><b>成果コミット系</b><span>「アクセス数◯倍保証」「結果にコミット」等の断言・煽り帯・「今だけ」。<span class="ev">E23</span></span></div></div>
+      <div class="n card"><div class="x">✕</div><div><b>エロ・かわいい系</b><span>肌色面積・ピンク基調・パステル全面・丸文字。嬢向け個人ツールと誤読される。<span class="ev">E23/D18</span></span></div></div>
+      <div class="n card"><div class="x">✕</div><div><b>情報商材系</b><span>赤黄の煽り・過密な文字組み・長文の熱弁。</span></div></div>
+      <div class="n card"><div class="x">✕</div><div><b>和食屋・和雑貨系</b><span>明朝体・毛筆・和柄・家紋・雲波紋様。藍と朱は使うが「和風デザイン」にはしない。</span></div></div>
+      <div class="n card"><div class="x">✕</div><div><b>SaaS既製品系</b><span>青グラデ・英語見出しで格好つける・コード風フォント。読者の生活圏にない言葉と色。</span></div></div>
+    </div>
+    <p class="ban">使用禁止：明朝体・筆記体・グラデーション・光彩・彩度盛り写真・コード風等幅フォント</p>
+  </section>
+
+  <!-- 06 -->
+  <section id="s6">
+    <div class="sec-no">06 — LOGO</div>
+    <h2>ロゴタイプ</h2>
+    <p class="sec-lede">鉤括弧込みで1つのロゴ。朱の括弧は「声を預かる・朱を入れる」の記号＝全接点共通のシグネチャー（不変要素）。</p>
+    <div class="logospec">
+      <div>
+        <div class="logobox card">
+          <div class="lg"><span class="br">「</span>カキイレ<span class="br">」</span></div>
+          <div class="lt">K A K I I R E</div>
+        </div>
+        <div class="logocap">基本形（明背景）</div>
+      </div>
+      <div>
+        <div class="logobox dark card">
+          <div class="lg"><span class="br">「</span>カキイレ<span class="br">」</span></div>
+          <div class="lt">K A K I I R E</div>
+        </div>
+        <div class="logocap">暗背景＝アプリのダークモード専用</div>
+      </div>
+    </div>
+    <p class="logonote">文字＝墨・括弧＝朱・Noto Sans JP <b>Black（ロゴ専用ウェイト）</b>。欧文 KAKIIRE は字間広めに小さく添える。暗背景では文字を生成りに、朱はそのまま。専用ロゴデータは制作中（このタイポグラフィ指定が当面の正）。</p>
+  </section>
+
+  <!-- 07 -->
+  <section id="s7">
+    <div class="sec-no">07 — COLOR</div>
+    <h2>カラー</h2>
+    <div class="pal">
+      <div class="chip"><div class="sw" style="background:#292420"></div><div class="nm">墨<i>SUMI</i></div><div class="hex">#292420</div><div class="role">文字・見出し・基調（温かい黒）</div></div>
+      <div class="chip"><div class="sw" style="background:#3D6BAD"></div><div class="nm">藍<i>AI</i></div><div class="hex">#3D6BAD</div><div class="role">ボタン・リンク・主色＝「ちゃんと系」の錨</div></div>
+      <div class="chip"><div class="sw" style="background:#DE5626"></div><div class="nm">朱<i>SHU</i></div><div class="hex">#DE5626</div><div class="role">鉤括弧・キー数字。面積5%上限</div></div>
+      <div class="chip"><div class="sw" style="background:#E9A090"></div><div class="nm">薄紅<i>USUBENI</i></div><div class="hex">#E9A090</div><div class="role">甘さひと匙3%。営業資材のみ・アプリ禁止</div></div>
+      <div class="chip"><div class="sw" style="background:#F7F3EA;border:1px solid #E8E0D2"></div><div class="nm">生成り<i>KINARI</i></div><div class="hex">#F7F3EA</div><div class="role">背景・余白（紙白）</div></div>
+    </div>
+    <p class="subpal"><b>補助</b>：夜墨 #171310（アプリのダークモード専用。LP・資料の基調には使わない）／罫線 #E8E0D2／中間文字 #6A6255・#99907F<br>
+    <b>朱はアプリUIでは使わない（ロゴのみ）</b>＝エラー色との混同回避。<b>薄紅は日記サンプル（商品の甘さ）の文脈だけ</b>＝道具は甘くしない。<span class="ev">C17</span></p>
+    <p class="subpal" style="margin-top:16px"><b>アプリ状態色（判子風バッジ・和色）</b></p>
+    <div class="states">
+      <span class="stamp" style="color:#99907F;border-color:#99907F">下書き</span>
+      <span class="stamp" style="color:#3D6BAD;border-color:#3D6BAD">生成済</span>
+      <span class="stamp" style="color:#B97B1F;border-color:#B97B1F">予約中</span>
+      <span class="stamp" style="color:#1E7A5A;border-color:#1E7A5A">投稿済</span>
+      <span class="stamp" style="color:#BF3D2B;border-color:#BF3D2B">失敗</span>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section id="s8">
+    <div class="sec-no">08 — TYPOGRAPHY</div>
+    <h2>タイポグラフィ</h2>
+    <div class="typo card">
+      <div class="row"><div class="k">見出し｜Noto Sans JP Bold（700）</div><div class="h">今日も、書き入れ時。</div></div>
+      <div class="row"><div class="k">本文｜Regular〜Medium</div><div class="b">写真と一言を送るだけで、本人の口調の日記が届きます。</div></div>
+      <div class="row"><div class="k">数字｜Bold＋等幅数字</div><div class="n">60本 <em>¥15,000</em> ／ 300本 <em>¥70,000</em></div></div>
+    </div>
+    <p class="typonote">書体は Noto Sans JP のみ（Office/Canva 代替＝游ゴシック。アライアンス先がリライトする前提で特殊フォントを混ぜない <span class="ev">A7</span>）。Black(900)はロゴ専用＝見出しはBoldで圧を抜く。本文の最小サイズ：<b>スマホ16px／印刷10.5pt</b> を下回らない <span class="ev">D19</span>。数字は tabular-nums。英語で格好をつけない。</p>
+  </section>
+
+  <!-- 09 -->
+  <section id="s9">
+    <div class="sec-no">09 — DIALS</div>
+    <h2>接点別ダイヤル</h2>
+    <p class="sec-lede">核（色・書体・シグネチャー）は共通。接点で変えてよいのは<b>温度だけ</b>。</p>
+    <div class="dials">
+      <div class="dial card">
+        <div class="name">LP</div>
+        <div class="role">第一印象・店構え<span class="ev">D19</span></div>
+        <div class="temp">温度 高<span class="dots">●●●</span></div>
+        <dl>
+          <dt>読者と時間</dt><dd>決裁者・閲覧3分＋フォーム3分</dd>
+          <dt>構成原則</dt><dd>困りごと→導入後の景色→書き入れ時。<b>1画面1主役</b></dd>
+          <dt>あしらい</dt><dd>角丸14px・ほの影可・線端丸めの罫・薄紅ひと匙可</dd>
+          <dt>暗色</dt><dd>使わない</dd>
+        </dl>
+      </div>
+      <div class="dial card">
+        <div class="name">営業資料（PDF）</div>
+        <div class="role">商談の本体・リライト原本<span class="ev">A7</span></div>
+        <div class="temp">温度 中<span class="dots">●●○</span></div>
+        <dl>
+          <dt>読者と時間</dt><dd>決裁者・5分で見せ切る</dd>
+          <dt>構成原則</dt><dd>物語→数字→価格（人件費比較）→<b>期待値はグレー明記</b></dd>
+          <dt>あしらい</dt><dd>LPと同じ。ただし表・数字ブロックは細罫の伝票調。<b>章単位で差し替え可能なモジュール構造</b></dd>
+          <dt>暗色</dt><dd>使わない</dd>
+        </dl>
+      </div>
+      <div class="dial card">
+        <div class="name">アプリUI</div>
+        <div class="role">毎日の道具<span class="ev">B8</span></div>
+        <div class="temp">温度 低<span class="dots">●○○</span></div>
+        <dl>
+          <dt>読者と時間</dt><dd>内勤・ドライバー、待機時間に片手で</dd>
+          <dt>構成原則</dt><dd>1画面1タスク・2タップ以内・<b>「問い合わせが来ないUI」</b><span class="ev">B9/B11</span></dd>
+          <dt>あしらい</dt><dd>角丸8px・影なしフラット・1px罫・判子風枠線バッジ・薄紅禁止</dd>
+          <dt>暗色</dt><dd>ダークモードのみ夜墨</dd>
+        </dl>
+      </div>
+    </div>
+    <p class="dialnote">商品サンプル（生成日記の実物）はスクショ・実画面で見せる＝写真素材やイラストより実物。<b>朱の鉤括弧「 」でキャストの声を包むシグネチャーを、資材の各面に1箇所</b>。</p>
+  </section>
+
+  <!-- 10 -->
+  <section id="s10">
+    <div class="sec-no">10 — VOICE</div>
+    <h2>言葉のルール</h2>
+    <div class="words">
+      <div class="w card"><div class="no"><s>結果にコミット／アクセス数◯倍保証</s></div><div class="yes">○ アクセス数の増加を「狙う」設計。期待値は正直にグレーと書く <span class="ev">E23</span></div></div>
+      <div class="w card"><div class="no"><s>月額15,000円（数字の羅列だけ）</s></div><div class="yes">○ 価格は人件費と比べて語る <span class="ev">A6</span></div></div>
+      <div class="w card"><div class="no"><s>業務効率化・DX推進（借り物の言葉）</s></div><div class="yes">○ 「キャスト継続率」「店舗が用意できる新しい福利厚生」<span class="ev">E22</span></div></div>
+      <div class="w card"><div class="no"><s>日記を書きましょう（説教）</s></div><div class="yes">○ 日記＝営業努力の可視化、を物語の入口に <span class="ev">C17</span></div></div>
+    </div>
+    <div class="quote"><span class="br">「</span>内勤をもう1晩雇うか、カキイレか。<span class="br">」</span><small>価格の語り方の例（A6）</small></div>
+    <p class="vocab">共通ルール：説教しない・現場を下に見ない・煽らない。ブランドの語彙は<b>「書き入れ時」「福利厚生」「キャスト継続率」</b>。</p>
+  </section>
+
+  <!-- 11 -->
+  <section id="s11">
+    <div class="sec-no">11 — AI PROMPT</div>
+    <h2>AI画像生成・外部発注用の指示文</h2>
+    <div class="prompt card"><b>営業資材（LP・PDF・バナー）用</b>
+      16:9、日本語のB2B SaaS営業資材。背景は生成り(#F7F3EA)、文字は墨(#292420)、主色は洗い藍(#3D6BAD)、差し色は暖朱(#DE5626)を面積5%だけ、薄紅(#E9A090)を小さなハイライトに3%まで。Noto Sans JP、見出しはBoldで短く、数字は等幅で大きく。角丸14pxのカードにごく薄い影、線端の丸い細罫、広い余白、1画面に主役1つ。朱の鉤括弧「 」で言葉を囲むのがシグネチャー。江戸の藍染と朱印を思わせる、堅気で誠実であたたかい商いのトーン。ネオン・黒紫・金ラメ・グラデーション・パステル全面・明朝体・和柄・毛筆・煽り帯・成果保証コピーは禁止。
+    </div>
+    <div class="prompt card"><b>アプリUI用</b>
+      日本語のB2B業務アプリUI。背景は生成り(#F7F3EA)、文字は墨(#292420)、アクセントは洗い藍(#3D6BAD)のみ。状態色は鼠(#99907F)・琥珀(#B97B1F)・常磐(#1E7A5A)・緋(#BF3D2B)。Noto Sans JP、数字はtabular-nums。角丸8px・影なしフラットなカード・1pxの細罫・判子風の枠線バッジ。1画面1タスク、装飾密度は最低、迷わない導線。ダークモードの地は夜墨(#171310)。ピンク・薄紅・装飾イラスト・グラデーション・コード風等幅フォントは禁止。
+    </div>
+  </section>
+
+  <footer>
+    <div>KAKIIRE BRAND GUIDELINES v4.0 — 正本：brand_guidelines.md</div>
+    <div>聞き取り根拠：brand_interview_questions.md（A1–E23）</div>
+  </footer>
+
+</div>
+</body>
+</html>
