@@ -1,0 +1,1248 @@
+<!doctype html>
+<!-- このファイルは日記制作アプリのUIクリッカブルモックの実体（静的HTML・生成はダミー応答・データは全て架空）。デザイン正本= design_concept.md、画面定義= requirements_diary_app.md §4、遷移= basic_design.md §4。版: 2026-07-29（brand_guidelines.md v4.1 / design_concept.md v3.1 準拠。全13画面＋PW変更共通画面＋ロール切替デモ。ロゴ= 納品SVG logo\b4_caret\ SHU-2/暗背景版インライン・無改変）。 -->
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>カキイレ UIモック</title>
+<style>
+  :root{
+    --bg:#f7f3ea; --panel:#fffdf8; --panel2:#fbf7ee; --border:#e8e0d2;
+    --ink:#292420; --ink2:#6a6255; --ink3:#99907f;
+    --accent:#3d6bad; --accent-w:#3d6bad19;
+    --st-draft:#99907f; --st-gen:#3d6bad; --st-sched:#b97b1f; --st-post:#1e7a5a; --st-fail:#bf3d2b;
+    --shu:#de5626; --ava:#6a6255; color-scheme:light;
+    --font-ui:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",-apple-system,"Segoe UI",system-ui,sans-serif;
+    --font-num:var(--font-ui);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#171310; --panel:#211c16; --panel2:#272119; --border:#3a3227;
+      --ink:#f1ebdf; --ink2:#b3a995; --ink3:#857c6b;
+      --accent:#6e97d9; --accent-w:#6e97d92b;
+      --st-draft:#857c6b; --st-gen:#6e97d9; --st-sched:#d99a3d; --st-post:#3fa57e; --st-fail:#e06450;
+      --shu:#de5626; --ava:#6a6255; color-scheme:dark;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f7f3ea; --panel:#fffdf8; --panel2:#fbf7ee; --border:#e8e0d2;
+    --ink:#292420; --ink2:#6a6255; --ink3:#99907f;
+    --accent:#3d6bad; --accent-w:#3d6bad19;
+    --st-draft:#99907f; --st-gen:#3d6bad; --st-sched:#b97b1f; --st-post:#1e7a5a; --st-fail:#bf3d2b;
+    --shu:#de5626; --ava:#6a6255; color-scheme:light;
+  }
+  :root[data-theme="dark"]{
+    --bg:#171310; --panel:#211c16; --panel2:#272119; --border:#3a3227;
+    --ink:#f1ebdf; --ink2:#b3a995; --ink3:#857c6b;
+    --accent:#6e97d9; --accent-w:#6e97d92b;
+    --st-draft:#857c6b; --st-gen:#6e97d9; --st-sched:#d99a3d; --st-post:#3fa57e; --st-fail:#e06450;
+    --shu:#de5626; --ava:#6a6255; color-scheme:dark;
+  }
+  *{box-sizing:border-box;margin:0}
+  [hidden]{display:none!important}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);line-height:1.6;
+    -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+  .num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+  button{font:inherit;cursor:pointer}
+  input,textarea,select{font:inherit;color:var(--ink)}
+
+  /* ==== アプリ枠 ==== */
+  .app{max-width:430px;min-height:100dvh;margin:0 auto;background:var(--bg);position:relative;
+    display:flex;flex-direction:column}
+  @media (min-width:520px){
+    body{padding:28px 0}
+    .app{min-height:calc(100dvh - 56px);border:1px solid var(--border);border-radius:16px;
+      overflow:hidden}
+  }
+
+  /* ==== ヘッダー ==== */
+  .hd{display:flex;align-items:center;gap:10px;padding:14px 16px 10px;position:sticky;top:0;z-index:20;
+    background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px)}
+  .hd .back{border:1px solid var(--border);background:var(--panel);border-radius:8px;
+    width:36px;height:36px;color:var(--ink2);font-size:16px;flex:0 0 auto}
+  .hd h1{font-size:17px;font-weight:700;letter-spacing:.01em;flex:1;min-width:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hd .sid{font-family:var(--font-num);font-size:10px;color:var(--ink3);letter-spacing:.08em}
+  .demo-pill{border:1px solid var(--border);background:var(--panel);color:var(--ink3);
+    font-size:10px;font-weight:700;letter-spacing:.1em;border-radius:4px;padding:5px 10px;flex:0 0 auto}
+
+  main{flex:1;padding:4px 16px 120px;display:flex;flex-direction:column;gap:14px}
+  .screen{display:none}
+  .screen.on{display:block}
+  #s01.on{display:flex;flex-direction:column;flex:1}
+  .screen.on main, main{animation:fade .18s ease}
+  @keyframes fade{from{opacity:.0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ==== 部品 ==== */
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px}
+  .card+.card{margin-top:12px}
+  .card h2{font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .stack{display:flex;flex-direction:column;gap:12px}
+
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;
+    border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--ink);
+    font-weight:700;font-size:15px;padding:10px 16px;position:relative}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.ghost{background:var(--panel2);font-weight:600;color:var(--ink2)}
+  .btn.danger{color:var(--st-fail);border-color:color-mix(in srgb,var(--st-fail) 40%,var(--border))}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn .note{font-size:11px;font-weight:500;color:inherit;opacity:.75}
+  .btn .reddot{position:absolute;top:10px;right:12px;min-width:20px;height:20px;border-radius:999px;
+    background:var(--st-fail);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;
+    justify-content:center;padding:0 6px}
+
+  .m1{display:inline-flex;align-items:center;font-family:var(--font-num);font-size:9.5px;font-weight:700;
+    letter-spacing:.08em;color:var(--ink2);border:1.5px solid color-mix(in srgb,var(--ink2) 55%,transparent);
+    border-radius:4px;padding:1px 5px;vertical-align:2px}
+
+  label.f{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:5px}
+  .in{width:100%;border:1px solid var(--border);background:var(--panel2);border-radius:8px;
+    padding:11px 12px;font-size:16px;outline:none} /* 16px未満はiOS Safariがフォーカス時に自動ズームするため */
+  .in:focus{border-color:var(--accent)}
+  textarea.in{resize:vertical;line-height:1.7}
+  .hint{font-size:11.5px;color:var(--ink3);margin-top:5px}
+
+  /* 判子風スタンプ（伝票様式=塗りピル廃止） */
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.06em;
+    border-radius:4px;padding:2px 8px;border:1.5px solid currentColor;background:transparent;white-space:nowrap}
+  .b-draft{color:var(--st-draft)} .b-gen{color:var(--st-gen)}
+  .b-sched{color:var(--st-sched)} .b-post{color:var(--st-post)} .b-fail{color:var(--st-fail)}
+
+  .credit{display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+  .credit .big{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-size:30px;font-weight:700;line-height:1}
+  .credit .lbl,.credit .big,.credit .bar{display:block}
+  .credit .big small{font-size:13px;color:var(--ink3);font-weight:500}
+  .credit .lbl{font-size:11px;color:var(--ink3);font-weight:700;margin-bottom:3px}
+  .credit .sub{font-size:11px;color:var(--ink2)}
+  .credit .cta{margin-left:auto;color:var(--accent);font-size:12px;font-weight:700;white-space:nowrap}
+  .bar{height:6px;border-radius:99px;background:var(--panel2);border:1px solid var(--border);overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+
+  .row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--border);
+    width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left;color:var(--ink)}
+  .row:last-child{border-bottom:0}
+  .ava{width:46px;height:46px;border-radius:8px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:17px;color:#fff;background:var(--ava)}
+  .row .nm{font-weight:700;font-size:15px}
+  .row .sub{font-size:12px;color:var(--ink3)}
+  .row .arw{margin-left:auto;color:var(--ink3)}
+  .thumb{width:46px;height:46px;border-radius:8px;flex:0 0 auto;background:var(--panel2);
+    border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:19px}
+
+  .fixedbar{position:sticky;bottom:76px;z-index:15;padding:0 0 4px;margin-top:auto}
+
+  /* ==== 下部ナビ (S-10) ==== */
+  nav.tab{position:sticky;bottom:0;z-index:30;display:flex;background:var(--panel);
+    border-top:1px solid var(--border);padding:6px 8px calc(8px + env(safe-area-inset-bottom))}
+  nav.tab button{flex:1;background:none;border:0;color:var(--ink3);font-size:10.5px;font-weight:700;
+    display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:8px;position:relative}
+  nav.tab button.on{color:var(--accent)}
+  nav.tab .ic{font-size:19px;line-height:1}
+  nav.tab svg.ic{display:block}
+  nav.tab .dot{position:absolute;top:2px;right:calc(50% - 16px);width:8px;height:8px;border-radius:99px;background:var(--st-fail)}
+
+  /* ==== 生成中 ==== */
+  .genwrap{display:flex;flex-direction:column;align-items:center;gap:18px;padding:48px 0 24px;text-align:center}
+  .spin{width:52px;height:52px;border-radius:50%;border:4px solid var(--accent-w);border-top-color:var(--accent);
+    animation:rot 1s linear infinite}
+  @keyframes rot{to{transform:rotate(1turn)}}
+  .skel{width:100%;display:flex;flex-direction:column;gap:10px}
+  .skel i{display:block;height:13px;border-radius:6px;background:var(--border);animation:sh 1.4s ease infinite}
+  @keyframes sh{50%{opacity:.45}}
+
+  /* ==== NG警告 ==== */
+  .ngbox{border:1px solid color-mix(in srgb,var(--st-sched) 55%,var(--border));
+    background:color-mix(in srgb,var(--st-sched) 9%,var(--panel));border-radius:8px;padding:12px 14px;font-size:16px}
+  .ngbox b{color:var(--st-sched)}
+  .ngbox mark{background:color-mix(in srgb,var(--st-sched) 30%,transparent);color:inherit;border-radius:4px;padding:0 3px}
+
+  /* ==== モーダル・トースト ==== */
+  .modal{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;
+    background:rgba(41,36,32,.45)}
+  .modal.on{display:flex}
+  .sheet{width:100%;max-width:430px;background:var(--panel);border-radius:12px 12px 0 0;
+    padding:20px 20px calc(20px + env(safe-area-inset-bottom));max-height:82dvh;overflow-y:auto}
+  @media (min-width:520px){.modal{align-items:center}.sheet{border-radius:12px}}
+  .sheet h3{font-size:16px;margin-bottom:12px}
+  .sheet ol{padding-left:20px;font-size:14px;display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+  .toast{position:fixed;left:50%;bottom:104px;transform:translateX(-50%) translateY(8px);z-index:70;
+    background:var(--ink);color:var(--bg);font-size:13px;font-weight:700;border-radius:99px;
+    padding:9px 18px;opacity:0;pointer-events:none;transition:.18s;max-width:calc(100vw - 32px)}
+  .toast.on{opacity:1;transform:translateX(-50%)}
+
+  /* ==== ログイン ==== */
+  .login{flex:1;display:flex;flex-direction:column;justify-content:center;gap:22px;padding:0 26px 60px}
+  .logo{text-align:center}
+  .logo svg{width:238px;max-width:82%;height:auto;display:block;margin:0 auto 2px}
+  .logo .lg-d{display:none}
+  @media (prefers-color-scheme:dark){.logo .lg-l{display:none}.logo .lg-d{display:block}}
+  :root[data-theme="light"] .logo .lg-l{display:block}
+  :root[data-theme="light"] .logo .lg-d{display:none}
+  :root[data-theme="dark"] .logo .lg-l{display:none}
+  :root[data-theme="dark"] .logo .lg-d{display:block}
+  .logo span{font-size:12px;color:var(--ink3)}
+
+  /* ==== トグル（S-06 本人ログイン可否） ==== */
+  .tglrow{display:flex;align-items:center;gap:12px;justify-content:space-between}
+  .tgl{position:relative;width:46px;height:26px;flex:0 0 auto}
+  .tgl input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;z-index:1}
+  .tgl i{position:absolute;inset:0;border-radius:99px;background:var(--panel2);border:1px solid var(--border);transition:.15s}
+  .tgl i::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:99px;background:var(--ink3);transition:.15s}
+  .tgl input:checked+i{background:var(--accent);border-color:var(--accent)}
+  .tgl input:checked+i::after{left:22px;background:#fff}
+
+  /* ==== DEMOロール切替ピル ==== */
+  .rolebar{display:flex;gap:8px;margin-bottom:12px}
+  .rolebar button{flex:1;border:1px solid var(--border);background:var(--panel2);color:var(--ink2);
+    font-size:12px;font-weight:700;border-radius:8px;padding:8px 0}
+  .rolebar button.on{border-color:var(--accent);color:var(--accent);background:var(--accent-w)}
+
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
+  .kv dt{color:var(--ink3);font-weight:700;white-space:nowrap}
+  details.fold{border:1px solid var(--border);border-radius:8px;background:var(--panel2)}
+  details.fold summary{padding:11px 14px;font-size:13px;font-weight:700;color:var(--ink2);cursor:pointer;list-style:none;
+    display:flex;align-items:center;gap:8px}
+  details.fold summary::after{content:"▾";margin-left:auto;color:var(--ink3);transition:.15s}
+  details.fold[open] summary::after{transform:rotate(180deg)}
+  details.fold .bd{padding:2px 14px 13px;font-size:13px;color:var(--ink2)}
+
+  table.gen{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.gen th{font-size:11px;color:var(--ink3);text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)}
+  table.gen td{padding:7px 8px;border-bottom:1px solid var(--border)}
+  table.gen td.num{text-align:right}
+  .tblwrap{overflow-x:auto}
+
+  a{color:var(--accent)}
+  :is(button,input,textarea,select,summary,a):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= S-01 ログイン ================= -->
+  <section class="screen on" id="s01">
+    <div class="login">
+      <div class="logo">
+        <!-- 正式ロゴ B4「統合キャレット棒」SHU-2（明背景）＝ logo\b4_caret\logo_shu2.svg を無改変インライン -->
+        <svg class="lg-l" role="img" aria-label="カキイレ" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 170">
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(10 5) scale(1.1)">
+            <path d="M20 104V84" stroke="#3D6BAD" stroke-width="10"/>
+            <path d="M46 104V64" stroke="#3D6BAD" stroke-width="10"/>
+            <path d="M72 104V40" stroke="#3D6BAD" stroke-width="10"/>
+            <path d="M104 104V20M94 20H114M94 104H114" stroke="#DE5626" stroke-width="10"/>
+          </g>
+          <path d="M54.6,-81.1C54.47,-79.9 54.33,-78.33 54.2,-76.4 54.07,-74.47 53.97,-72.9 53.9,-71.7 53.63,-61.9 52.85,-53.15 51.55,-45.45 50.25,-37.75 48.33,-30.85 45.8,-24.75 43.27,-18.65 39.95,-13.13 35.85,-8.2 31.75,-3.27 26.77,1.3 20.9,5.5L6.8,-5.9C9.13,-7.23 11.62,-8.82 14.25,-10.65 16.88,-12.48 19.33,-14.6 21.6,-17 24.93,-20.47 27.65,-24.17 29.75,-28.1 31.85,-32.03 33.47,-36.22 34.6,-40.65 35.73,-45.08 36.52,-49.85 36.95,-54.95 37.38,-60.05 37.6,-65.53 37.6,-71.4 37.6,-72.13 37.57,-73.12 37.5,-74.35 37.43,-75.58 37.33,-76.82 37.2,-78.05 37.07,-79.28 36.93,-80.3 36.8,-81.1z M88.1,-59.3C87.97,-58.5 87.82,-57.52 87.65,-56.35 87.48,-55.18 87.4,-54.33 87.4,-53.8 87.33,-51.53 87.22,-48.72 87.05,-45.35 86.88,-41.98 86.65,-38.38 86.35,-34.55 86.05,-30.72 85.68,-26.9 85.25,-23.1 84.82,-19.3 84.3,-15.78 83.7,-12.55 83.1,-9.32 82.37,-6.63 81.5,-4.5 80.43,-1.77 78.78,0.35 76.55,1.85 74.32,3.35 71.3,4.1 67.5,4.1 64.43,4.1 61.43,4 58.5,3.8 55.57,3.6 52.93,3.4 50.6,3.2L48.7,-13C51.03,-12.53 53.42,-12.17 55.85,-11.9 58.28,-11.63 60.43,-11.5 62.3,-11.5 64.03,-11.5 65.27,-11.8 66,-12.4 66.73,-13 67.33,-13.93 67.8,-15.2 68.27,-16.33 68.7,-17.87 69.1,-19.8 69.5,-21.73 69.85,-23.92 70.15,-26.35 70.45,-28.78 70.72,-31.33 70.95,-34 71.18,-36.67 71.35,-39.28 71.45,-41.85 71.55,-44.42 71.6,-46.8 71.6,-49L25,-49C23.47,-49 21.32,-48.97 18.55,-48.9 15.78,-48.83 13.23,-48.7 10.9,-48.5L10.9,-64.3C13.23,-64.03 15.7,-63.83 18.3,-63.7 20.9,-63.57 23.13,-63.5 25,-63.5L69.5,-63.5C70.77,-63.5 72.12,-63.57 73.55,-63.7 74.98,-63.83 76.4,-64.03 77.8,-64.3z" fill="#292420" transform="translate(181 118)"/>
+          <path d="M34.9,-71.8C34.57,-73.33 34.22,-74.73 33.85,-76 33.48,-77.27 33.1,-78.53 32.7,-79.8L49.8,-82.5C49.93,-81.5 50.08,-80.2 50.25,-78.6 50.42,-77 50.63,-75.57 50.9,-74.3 51.1,-73.17 51.42,-71.32 51.85,-68.75 52.28,-66.18 52.83,-63.12 53.5,-59.55 54.17,-55.98 54.9,-52.15 55.7,-48.05 56.5,-43.95 57.3,-39.8 58.1,-35.6 58.9,-31.4 59.67,-27.38 60.4,-23.55 61.13,-19.72 61.8,-16.28 62.4,-13.25 63,-10.22 63.47,-7.83 63.8,-6.1 64.13,-4.63 64.53,-3 65,-1.2 65.47,0.6 65.93,2.37 66.4,4.1L49,7.1C48.73,5.17 48.53,3.3 48.4,1.5 48.27,-0.3 48.03,-1.93 47.7,-3.4 47.43,-4.93 47.05,-7.13 46.55,-10 46.05,-12.87 45.45,-16.17 44.75,-19.9 44.05,-23.63 43.3,-27.57 42.5,-31.7 41.7,-35.83 40.92,-39.98 40.15,-44.15 39.38,-48.32 38.65,-52.23 37.95,-55.9 37.25,-59.57 36.63,-62.78 36.1,-65.55 35.57,-68.32 35.17,-70.4 34.9,-71.8z M8.1,-60C9.83,-60.13 11.52,-60.25 13.15,-60.35 14.78,-60.45 16.37,-60.6 17.9,-60.8 19.3,-61 21.33,-61.28 24,-61.65 26.67,-62.02 29.72,-62.45 33.15,-62.95 36.58,-63.45 40.15,-63.98 43.85,-64.55 47.55,-65.12 51.13,-65.68 54.6,-66.25 58.07,-66.82 61.15,-67.33 63.85,-67.8 66.55,-68.27 68.63,-68.63 70.1,-68.9 71.77,-69.23 73.6,-69.62 75.6,-70.05 77.6,-70.48 79.3,-70.9 80.7,-71.3L83.6,-55.5C82.33,-55.43 80.68,-55.25 78.65,-54.95 76.62,-54.65 74.8,-54.4 73.2,-54.2 71.4,-53.93 69.03,-53.57 66.1,-53.1 63.17,-52.63 59.93,-52.12 56.4,-51.55 52.87,-50.98 49.27,-50.4 45.6,-49.8 41.93,-49.2 38.45,-48.63 35.15,-48.1 31.85,-47.57 28.97,-47.1 26.5,-46.7 24.03,-46.3 22.23,-46 21.1,-45.8 19.43,-45.47 17.85,-45.13 16.35,-44.8 14.85,-44.47 13.17,-44.03 11.3,-43.5z M8.4,-30.4C9.8,-30.47 11.6,-30.62 13.8,-30.85 16,-31.08 17.93,-31.33 19.6,-31.6 21.4,-31.87 23.8,-32.23 26.8,-32.7 29.8,-33.17 33.17,-33.7 36.9,-34.3 40.63,-34.9 44.48,-35.52 48.45,-36.15 52.42,-36.78 56.27,-37.42 60,-38.05 63.73,-38.68 67.15,-39.27 70.25,-39.8 73.35,-40.33 75.83,-40.77 77.7,-41.1 79.63,-41.5 81.58,-41.93 83.55,-42.4 85.52,-42.87 87.23,-43.3 88.7,-43.7L91.9,-27.8C90.43,-27.73 88.65,-27.53 86.55,-27.2 84.45,-26.87 82.43,-26.53 80.5,-26.2 78.43,-25.87 75.82,-25.45 72.65,-24.95 69.48,-24.45 66,-23.88 62.2,-23.25 58.4,-22.62 54.52,-21.98 50.55,-21.35 46.58,-20.72 42.77,-20.08 39.1,-19.45 35.43,-18.82 32.15,-18.25 29.25,-17.75 26.35,-17.25 24.07,-16.83 22.4,-16.5 20.13,-16.1 18.08,-15.73 16.25,-15.4 14.42,-15.07 12.93,-14.73 11.8,-14.4z" fill="#292420" transform="translate(265 118)"/>
+          <path d="M4.9,-40.4C14.03,-42.73 22.2,-45.4 29.4,-48.4 36.6,-51.4 43,-54.6 48.6,-58 52,-60.07 55.5,-62.53 59.1,-65.4 62.7,-68.27 66.1,-71.22 69.3,-74.25 72.5,-77.28 75.13,-80.07 77.2,-82.6L90.3,-70.1C87.17,-67.03 83.68,-63.92 79.85,-60.75 76.02,-57.58 72.05,-54.57 67.95,-51.7 63.85,-48.83 59.83,-46.23 55.9,-43.9 52.03,-41.7 47.73,-39.43 43,-37.1 38.27,-34.77 33.28,-32.57 28.05,-30.5 22.82,-28.43 17.6,-26.63 12.4,-25.1z M46.2,-50.2L63.6,-54 63.6,-9.3C63.6,-7.7 63.63,-5.95 63.7,-4.05 63.77,-2.15 63.87,-0.37 64,1.3 64.13,2.97 64.33,4.27 64.6,5.2L45.4,5.2C45.53,4.27 45.67,2.97 45.8,1.3 45.93,-0.37 46.03,-2.15 46.1,-4.05 46.17,-5.95 46.2,-7.7 46.2,-9.3z" fill="#292420" transform="translate(349 118)"/>
+          <path d="M18,-4.4C18.73,-5.93 19.17,-7.23 19.3,-8.3 19.43,-9.37 19.5,-10.53 19.5,-11.8 19.5,-13.2 19.5,-15.17 19.5,-17.7 19.5,-20.23 19.5,-23.13 19.5,-26.4 19.5,-29.67 19.5,-33.08 19.5,-36.65 19.5,-40.22 19.5,-43.75 19.5,-47.25 19.5,-50.75 19.5,-53.98 19.5,-56.95 19.5,-59.92 19.5,-62.4 19.5,-64.4 19.5,-65.87 19.43,-67.37 19.3,-68.9 19.17,-70.43 19.02,-71.9 18.85,-73.3 18.68,-74.7 18.47,-75.93 18.2,-77L37.2,-77C36.87,-74.73 36.6,-72.62 36.4,-70.65 36.2,-68.68 36.1,-66.6 36.1,-64.4 36.1,-62.67 36.1,-60.65 36.1,-58.35 36.1,-56.05 36.1,-53.58 36.1,-50.95 36.1,-48.32 36.1,-45.6 36.1,-42.8 36.1,-40 36.1,-37.23 36.1,-34.5 36.1,-31.77 36.1,-29.17 36.1,-26.7 36.1,-24.23 36.1,-22 36.1,-20 36.1,-18 36.1,-16.37 36.1,-15.1 39.77,-16.23 43.78,-17.83 48.15,-19.9 52.52,-21.97 56.97,-24.42 61.5,-27.25 66.03,-30.08 70.37,-33.22 74.5,-36.65 78.63,-40.08 82.33,-43.73 85.6,-47.6L94.2,-33.8C87.13,-25.53 78.58,-18.43 68.55,-12.5 58.52,-6.57 47.8,-1.6 36.4,2.4 35.67,2.67 34.68,3.03 33.45,3.5 32.22,3.97 30.9,4.67 29.5,5.6z" fill="#292420" transform="translate(433 118)"/>
+          <path d="M1.81,0L1.81,-15.64 5.57,-15.64 5.57,-9.45 5.63,-9.45 10.06,-15.64 14.18,-15.64 9.45,-9.37 15.06,0 10.96,0 7.27,-6.4 5.57,-4.09 5.57,0z" fill="#99907F" transform="translate(181 156)"/>
+          <path d="M-0.17,0L4.68,-15.64 9.18,-15.64 14.03,0 10.08,0 8.13,-7.81C7.92,-8.6 7.71,-9.43 7.51,-10.31 7.3,-11.19 7.1,-12.03 6.89,-12.83L6.8,-12.83C6.62,-12.02 6.43,-11.18 6.22,-10.3 6.01,-9.43 5.8,-8.6 5.61,-7.81L3.65,0z M3.13,-3.59L3.13,-6.49 10.69,-6.49 10.69,-3.59z" fill="#99907F" transform="translate(204.69 156)"/>
+          <path d="M1.81,0L1.81,-15.64 5.57,-15.64 5.57,-9.45 5.63,-9.45 10.06,-15.64 14.18,-15.64 9.45,-9.37 15.06,0 10.96,0 7.27,-6.4 5.57,-4.09 5.57,0z" fill="#99907F" transform="translate(227.37 156)"/>
+          <path d="M1.81,0L1.81,-15.64 5.57,-15.64 5.57,0z" fill="#99907F" transform="translate(251.06 156)"/>
+          <path d="M1.81,0L1.81,-15.64 5.57,-15.64 5.57,0z" fill="#99907F" transform="translate(267.23 156)"/>
+          <path d="M1.81,0L1.81,-15.64 7.54,-15.64C8.66,-15.64 9.68,-15.5 10.6,-15.2 11.53,-14.91 12.27,-14.4 12.82,-13.68 13.37,-12.96 13.65,-11.97 13.65,-10.71 13.65,-9.49 13.37,-8.5 12.82,-7.73 12.27,-6.96 11.53,-6.39 10.6,-6.04 9.68,-5.68 8.66,-5.5 7.54,-5.5L5.57,-5.5 5.57,0z M5.57,-8.46L7.24,-8.46C8.14,-8.46 8.82,-8.66 9.29,-9.04 9.76,-9.43 10,-9.98 10,-10.71 10,-11.45 9.76,-11.96 9.29,-12.24 8.82,-12.52 8.14,-12.66 7.24,-12.66L5.57,-12.66z M10.25,0L6.87,-6.47 9.41,-8.93 14.45,0z" fill="#99907F" transform="translate(283.4 156)"/>
+          <path d="M1.81,0L1.81,-15.64 11.72,-15.64 11.72,-12.52 5.57,-12.52 5.57,-9.62 10.79,-9.62 10.79,-6.47 5.57,-6.47 5.57,-3.15 11.95,-3.15 11.95,0z" fill="#99907F" transform="translate(307.08 156)"/>
+        </svg>
+        <!-- 正式ロゴ 暗背景版 ＝ logo\b4_caret\logo_horizontal_dark.svg を無改変インライン -->
+        <svg class="lg-d" role="img" aria-label="カキイレ" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 170">
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(10 5) scale(1.1)">
+            <path d="M20 104V84" stroke="#F7F3EA" stroke-width="10"/>
+            <path d="M46 104V64" stroke="#F7F3EA" stroke-width="10"/>
+            <path d="M72 104V40" stroke="#F7F3EA" stroke-width="10"/>
+            <path d="M104 104V20M94 20H114M94 104H114" stroke="#F7F3EA" stroke-width="10"/>
+          </g>
+          <path d="M54.6,-81.1C54.47,-79.9 54.33,-78.33 54.2,-76.4 54.07,-74.47 53.97,-72.9 53.9,-71.7 53.63,-61.9 52.85,-53.15 51.55,-45.45 50.25,-37.75 48.33,-30.85 45.8,-24.75 43.27,-18.65 39.95,-13.13 35.85,-8.2 31.75,-3.27 26.77,1.3 20.9,5.5L6.8,-5.9C9.13,-7.23 11.62,-8.82 14.25,-10.65 16.88,-12.48 19.33,-14.6 21.6,-17 24.93,-20.47 27.65,-24.17 29.75,-28.1 31.85,-32.03 33.47,-36.22 34.6,-40.65 35.73,-45.08 36.52,-49.85 36.95,-54.95 37.38,-60.05 37.6,-65.53 37.6,-71.4 37.6,-72.13 37.57,-73.12 37.5,-74.35 37.43,-75.58 37.33,-76.82 37.2,-78.05 37.07,-79.28 36.93,-80.3 36.8,-81.1z M88.1,-59.3C87.97,-58.5 87.82,-57.52 87.65,-56.35 87.48,-55.18 87.4,-54.33 87.4,-53.8 87.33,-51.53 87.22,-48.72 87.05,-45.35 86.88,-41.98 86.65,-38.38 86.35,-34.55 86.05,-30.72 85.68,-26.9 85.25,-23.1 84.82,-19.3 84.3,-15.78 83.7,-12.55 83.1,-9.32 82.37,-6.63 81.5,-4.5 80.43,-1.77 78.78,0.35 76.55,1.85 74.32,3.35 71.3,4.1 67.5,4.1 64.43,4.1 61.43,4 58.5,3.8 55.57,3.6 52.93,3.4 50.6,3.2L48.7,-13C51.03,-12.53 53.42,-12.17 55.85,-11.9 58.28,-11.63 60.43,-11.5 62.3,-11.5 64.03,-11.5 65.27,-11.8 66,-12.4 66.73,-13 67.33,-13.93 67.8,-15.2 68.27,-16.33 68.7,-17.87 69.1,-19.8 69.5,-21.73 69.85,-23.92 70.15,-26.35 70.45,-28.78 70.72,-31.33 70.95,-34 71.18,-36.67 71.35,-39.28 71.45,-41.85 71.55,-44.42 71.6,-46.8 71.6,-49L25,-49C23.47,-49 21.32,-48.97 18.55,-48.9 15.78,-48.83 13.23,-48.7 10.9,-48.5L10.9,-64.3C13.23,-64.03 15.7,-63.83 18.3,-63.7 20.9,-63.57 23.13,-63.5 25,-63.5L69.5,-63.5C70.77,-63.5 72.12,-63.57 73.55,-63.7 74.98,-63.83 76.4,-64.03 77.8,-64.3z" fill="#F7F3EA" transform="translate(181 118)"/>
+          <path d="M34.9,-71.8C34.57,-73.33 34.22,-74.73 33.85,-76 33.48,-77.27 33.1,-78.53 32.7,-79.8L49.8,-82.5C49.93,-81.5 50.08,-80.2 50.25,-78.6 50.42,-77 50.63,-75.57 50.9,-74.3 51.1,-73.17 51.42,-71.32 51.85,-68.75 52.28,-66.18 52.83,-63.12 53.5,-59.55 54.17,-55.98 54.9,-52.15 55.7,-48.05 56.5,-43.95 57.3,-39.8 58.1,-35.6 58.9,-31.4 59.67,-27.38 60.4,-23.55 61.13,-19.72 61.8,-16.28 62.4,-13.25 63,-10.22 63.47,-7.83 63.8,-6.1 64.13,-4.63 64.53,-3 65,-1.2 65.47,0.6 65.93,2.37 66.4,4.1L49,7.1C48.73,5.17 48.53,3.3 48.4,1.5 48.27,-0.3 48.03,-1.93 47.7,-3.4 47.43,-4.93 47.05,-7.13 46.55,-10 46.05,-12.87 45.45,-16.17 44.75,-19.9 44.05,-23.63 43.3,-27.57 42.5,-31.7 41.7,-35.83 40.92,-39.98 40.15,-44.15 39.38,-48.32 38.65,-52.23 37.95,-55.9 37.25,-59.57 36.63,-62.78 36.1,-65.55 35.57,-68.32 35.17,-70.4 34.9,-71.8z M8.1,-60C9.83,-60.13 11.52,-60.25 13.15,-60.35 14.78,-60.45 16.37,-60.6 17.9,-60.8 19.3,-61 21.33,-61.28 24,-61.65 26.67,-62.02 29.72,-62.45 33.15,-62.95 36.58,-63.45 40.15,-63.98 43.85,-64.55 47.55,-65.12 51.13,-65.68 54.6,-66.25 58.07,-66.82 61.15,-67.33 63.85,-67.8 66.55,-68.27 68.63,-68.63 70.1,-68.9 71.77,-69.23 73.6,-69.62 75.6,-70.05 77.6,-70.48 79.3,-70.9 80.7,-71.3L83.6,-55.5C82.33,-55.43 80.68,-55.25 78.65,-54.95 76.62,-54.65 74.8,-54.4 73.2,-54.2 71.4,-53.93 69.03,-53.57 66.1,-53.1 63.17,-52.63 59.93,-52.12 56.4,-51.55 52.87,-50.98 49.27,-50.4 45.6,-49.8 41.93,-49.2 38.45,-48.63 35.15,-48.1 31.85,-47.57 28.97,-47.1 26.5,-46.7 24.03,-46.3 22.23,-46 21.1,-45.8 19.43,-45.47 17.85,-45.13 16.35,-44.8 14.85,-44.47 13.17,-44.03 11.3,-43.5z M8.4,-30.4C9.8,-30.47 11.6,-30.62 13.8,-30.85 16,-31.08 17.93,-31.33 19.6,-31.6 21.4,-31.87 23.8,-32.23 26.8,-32.7 29.8,-33.17 33.17,-33.7 36.9,-34.3 40.63,-34.9 44.48,-35.52 48.45,-36.15 52.42,-36.78 56.27,-37.42 60,-38.05 63.73,-38.68 67.15,-39.27 70.25,-39.8 73.35,-40.33 75.83,-40.77 77.7,-41.1 79.63,-41.5 81.58,-41.93 83.55,-42.4 85.52,-42.87 87.23,-43.3 88.7,-43.7L91.9,-27.8C90.43,-27.73 88.65,-27.53 86.55,-27.2 84.45,-26.87 82.43,-26.53 80.5,-26.2 78.43,-25.87 75.82,-25.45 72.65,-24.95 69.48,-24.45 66,-23.88 62.2,-23.25 58.4,-22.62 54.52,-21.98 50.55,-21.35 46.58,-20.72 42.77,-20.08 39.1,-19.45 35.43,-18.82 32.15,-18.25 29.25,-17.75 26.35,-17.25 24.07,-16.83 22.4,-16.5 20.13,-16.1 18.08,-15.73 16.25,-15.4 14.42,-15.07 12.93,-14.73 11.8,-14.4z" fill="#F7F3EA" transform="translate(265 118)"/>
+          <path d="M4.9,-40.4C14.03,-42.73 22.2,-45.4 29.4,-48.4 36.6,-51.4 43,-54.6 48.6,-58 52,-60.07 55.5,-62.53 59.1,-65.4 62.7,-68.27 66.1,-71.22 69.3,-74.25 72.5,-77.28 75.13,-80.07 77.2,-82.6L90.3,-70.1C87.17,-67.03 83.68,-63.92 79.85,-60.75 76.02,-57.58 72.05,-54.57 67.95,-51.7 63.85,-48.83 59.83,-46.23 55.9,-43.9 52.03,-41.7 47.73,-39.43 43,-37.1 38.27,-34.77 33.28,-32.57 28.05,-30.5 22.82,-28.43 17.6,-26.63 12.4,-25.1z M46.2,-50.2L63.6,-54 63.6,-9.3C63.6,-7.7 63.63,-5.95 63.7,-4.05 63.77,-2.15 63.87,-0.37 64,1.3 64.13,2.97 64.33,4.27 64.6,5.2L45.4,5.2C45.53,4.27 45.67,2.97 45.8,1.3 45.93,-0.37 46.03,-2.15 46.1,-4.05 46.17,-5.95 46.2,-7.7 46.2,-9.3z" fill="#F7F3EA" transform="translate(349 118)"/>
+          <path d="M18,-4.4C18.73,-5.93 19.17,-7.23 19.3,-8.3 19.43,-9.37 19.5,-10.53 19.5,-11.8 19.5,-13.2 19.5,-15.17 19.5,-17.7 19.5,-20.23 19.5,-23.13 19.5,-26.4 19.5,-29.67 19.5,-33.08 19.5,-36.65 19.5,-40.22 19.5,-43.75 19.5,-47.25 19.5,-50.75 19.5,-53.98 19.5,-56.95 19.5,-59.92 19.5,-62.4 19.5,-64.4 19.5,-65.87 19.43,-67.37 19.3,-68.9 19.17,-70.43 19.02,-71.9 18.85,-73.3 18.68,-74.7 18.47,-75.93 18.2,-77L37.2,-77C36.87,-74.73 36.6,-72.62 36.4,-70.65 36.2,-68.68 36.1,-66.6 36.1,-64.4 36.1,-62.67 36.1,-60.65 36.1,-58.35 36.1,-56.05 36.1,-53.58 36.1,-50.95 36.1,-48.32 36.1,-45.6 36.1,-42.8 36.1,-40 36.1,-37.23 36.1,-34.5 36.1,-31.77 36.1,-29.17 36.1,-26.7 36.1,-24.23 36.1,-22 36.1,-20 36.1,-18 36.1,-16.37 36.1,-15.1 39.77,-16.23 43.78,-17.83 48.15,-19.9 52.52,-21.97 56.97,-24.42 61.5,-27.25 66.03,-30.08 70.37,-33.22 74.5,-36.65 78.63,-40.08 82.33,-43.73 85.6,-47.6L94.2,-33.8C87.13,-25.53 78.58,-18.43 68.55,-12.5 58.52,-6.57 47.8,-1.6 36.4,2.4 35.67,2.67 34.68,3.03 33.45,3.5 32.22,3.97 30.9,4.67 29.5,5.6z" fill="#F7F3EA" transform="translate(433 118)"/>
+          <path d="M1.81,0L1.81,-15.64 5.57,-15.64 5.57,-9.45 5.63,-9.45 10.06,-15.64 14.18,-15.64 9.45,-9.37 15.06,0 10.96,0 7.27,-6.4 5.57,-4.09 5.57,0z" fill="#99907F" transform="translate(181 156)"/>
+          <path d="M-0.17,0L4.68,-15.64 9.18,-15.64 14.03,0 10.08,0 8.13,-7.81C7.92,-8.6 7.71,-9.43 7.51,-10.31 7.3,-11.19 7.1,-12.03 6.89,-12.83L6.8,-12.83C6.62,-12.02 6.43,-11.18 6.22,-10.3 6.01,-9.43 5.8,-8.6 5.61,-7.81L3.65,0z M3.13,-3.59L3.13,-6.49 10.69,-6.49 10.69,-3.59z" fill="#99907F" transform="translate(204.69 156)"/>
+          <path d="M1.81,0L1.81,-15.64 5.57,-15.64 5.57,-9.45 5.63,-9.45 10.06,-15.64 14.18,-15.64 9.45,-9.37 15.06,0 10.96,0 7.27,-6.4 5.57,-4.09 5.57,0z" fill="#99907F" transform="translate(227.37 156)"/>
+          <path d="M1.81,0L1.81,-15.64 5.57,-15.64 5.57,0z" fill="#99907F" transform="translate(251.06 156)"/>
+          <path d="M1.81,0L1.81,-15.64 5.57,-15.64 5.57,0z" fill="#99907F" transform="translate(267.23 156)"/>
+          <path d="M1.81,0L1.81,-15.64 7.54,-15.64C8.66,-15.64 9.68,-15.5 10.6,-15.2 11.53,-14.91 12.27,-14.4 12.82,-13.68 13.37,-12.96 13.65,-11.97 13.65,-10.71 13.65,-9.49 13.37,-8.5 12.82,-7.73 12.27,-6.96 11.53,-6.39 10.6,-6.04 9.68,-5.68 8.66,-5.5 7.54,-5.5L5.57,-5.5 5.57,0z M5.57,-8.46L7.24,-8.46C8.14,-8.46 8.82,-8.66 9.29,-9.04 9.76,-9.43 10,-9.98 10,-10.71 10,-11.45 9.76,-11.96 9.29,-12.24 8.82,-12.52 8.14,-12.66 7.24,-12.66L5.57,-12.66z M10.25,0L6.87,-6.47 9.41,-8.93 14.45,0z" fill="#99907F" transform="translate(283.4 156)"/>
+          <path d="M1.81,0L1.81,-15.64 11.72,-15.64 11.72,-12.52 5.57,-12.52 5.57,-9.62 10.79,-9.62 10.79,-6.47 5.57,-6.47 5.57,-3.15 11.95,-3.15 11.95,0z" fill="#99907F" transform="translate(307.08 156)"/>
+        </svg>
+        <span>デモ環境（データは全て架空です）</span>
+      </div>
+      <div class="stack">
+        <div>
+          <label class="f" for="lid">メールアドレス / ID</label>
+          <input class="in" id="lid" value="demo-owner@example.com" autocomplete="username">
+        </div>
+        <div>
+          <label class="f" for="lpw">パスワード</label>
+          <input class="in" id="lpw" type="password" value="demodemo" autocomplete="current-password">
+        </div>
+        <button class="btn primary" onclick="loginGo()">ログイン</button>
+        <p class="hint" style="text-align:center">パスワードを忘れた場合は店舗のオーナーへ（オーナーの方は運営へ）再発行を依頼してください</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S-03 メインメニュー ================= -->
+  <section class="screen" id="s03">
+    <header class="hd">
+      <h1>ホーム <span class="sid">S-03</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <button class="credit" onclick="openModal('mOkawari')">
+        <span>
+          <span class="lbl">残り生成回数 <span class="m1">M1</span></span>
+          <span class="big num">43<small> / 60本</small></span>
+          <span class="bar" style="width:150px"><i style="width:72%"></i></span>
+        </span>
+        <span class="cta">おかわり ›</span>
+      </button>
+      <div class="stack">
+        <button class="btn primary" style="min-height:56px" onclick="go('s04')">✎ 日記を書く</button>
+        <button class="btn" onclick="go('s04')">キャスト一覧</button>
+        <button class="btn" onclick="go('s08')">投稿履歴<span class="reddot">1</span></button>
+        <button class="btn" onclick="go('s09')">設定</button>
+        <button class="btn ghost" id="btnStaffAdd" onclick="go('s02')">＋ スタッフ追加 <span class="note">オーナーのみ</span></button>
+        <button class="btn ghost" onclick="openModal('mHelp')">？ ヘルプ</button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= S-04 キャスト一覧 ================= -->
+  <section class="screen" id="s04">
+    <header class="hd">
+      <button class="back" onclick="go('s03')" aria-label="戻る">‹</button>
+      <h1>キャスト一覧 <span class="sid">S-04</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div style="display:flex;gap:10px;align-items:center">
+        <select class="in" style="flex:1" aria-label="並び替え">
+          <option>日記生成が新しい順</option><option>日記生成が古い順</option>
+          <option>登録が新しい順</option><option>登録が古い順</option>
+          <option>五十音順（あ→わ）</option><option>五十音順（わ→あ）</option>
+        </select>
+        <button class="btn" style="width:auto;min-height:44px;white-space:nowrap" onclick="go('s13')">＋ 追加</button>
+      </div>
+      <div class="card" style="padding:4px 14px">
+        <button class="row" onclick="selectCast(0)">
+          <span class="ava" style="background:#6a6255">こ</span>
+          <span><span class="nm">こはる</span><br><span class="sub">21歳 ・ 今日 2本生成</span></span>
+          <span class="arw">›</span>
+        </button>
+        <button class="row" onclick="selectCast(1)">
+          <span class="ava" style="background:#6a6255">り</span>
+          <span><span class="nm">りりあ</span><br><span class="sub">24歳 ・ 昨日 1本生成</span></span>
+          <span class="arw">›</span>
+        </button>
+        <button class="row" onclick="selectCast(2)">
+          <span class="ava" style="background:#6a6255">ち</span>
+          <span><span class="nm">ちなつ</span><br><span class="sub">26歳 ・ 3日前 1本生成</span></span>
+          <span class="arw">›</span>
+        </button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= S-13 キャスト新規登録 ================= -->
+  <section class="screen" id="s13">
+    <header class="hd">
+      <button class="back" onclick="go('s04')" aria-label="戻る">‹</button>
+      <h1>キャスト新規登録 <span class="sid">S-13</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card stack">
+        <div>
+          <label class="f" for="c-name">源氏名</label>
+          <input class="in" id="c-name" placeholder="例）ももか">
+        </div>
+        <div>
+          <label class="f" for="c-url">プロフィールURL <span class="m1">M1</span></label>
+          <input class="in" id="c-url" placeholder="https://…（自動取り込み）" disabled>
+          <p class="hint">M1で媒体プロフィールの自動取り込みに対応。デモ版は下の手入力で登録します</p>
+        </div>
+        <div>
+          <label class="f" for="c-prof">プロフィール（手入力）</label>
+          <textarea class="in" id="c-prof" rows="3" placeholder="身長・スタイル・出身・趣味など"></textarea>
+        </div>
+        <div>
+          <label class="f" for="c-chara">キャラ設定（口調・一人称・NG事項）</label>
+          <textarea class="in" id="c-chara" rows="3" placeholder="例）語尾のばす／一人称は名前／絵文字多め／お酒の話はNG"></textarea>
+        </div>
+      </div>
+      <div class="fixedbar"><button class="btn primary" onclick="openStrategy15('s13')">登録してキャストページへ</button></div>
+    </main>
+  </section>
+
+  <!-- ================= S-05 キャスト情報 ================= -->
+  <section class="screen" id="s05">
+    <header class="hd">
+      <button class="back" onclick="go('s04')" aria-label="戻る">‹</button>
+      <h1 id="castTitle">こはる <span class="sid">S-05</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card">
+        <h2>日記を書く</h2>
+        <label class="f" for="neta">ネタ（空欄なら 戦略→プロフィール→おまかせ の順で自動）</label>
+        <textarea class="in" id="neta" rows="2" placeholder="例）雨の日の出勤、差し入れもらった、新しい香水"></textarea>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btn primary" style="flex:1.4" onclick="startGen()">1本生成</button>
+          <button class="btn" style="flex:1" onclick="toast('M1: 戦略と出勤に合わせてN本＋日時案を一括生成')">まとめて生成 <span class="m1">M1</span></button>
+        </div>
+        <p class="hint num" style="margin-top:8px">残り生成回数 43/60（生成1本＝1クレジット・再生成は消費なし）</p>
+      </div>
+
+      <div class="card">
+        <h2>日記戦略 <span class="m1">M1</span></h2>
+        <p style="color:var(--ink2)">「新規向けに清楚キャラを強化。平日19-22時に1日2本」— プロフィールと過去日記から自動立案し、投稿日時の提案に使われます。</p>
+      </div>
+
+      <details class="fold">
+        <summary>プロフィール・キャラ設定</summary>
+        <div class="bd">
+          <dl class="kv">
+            <dt>源氏名</dt><dd id="kvName">こはる</dd>
+            <dt>公称年齢</dt><dd class="num">21歳</dd>
+            <dt>キャラ設定</dt><dd>語尾のばしがち・一人称は名前・絵文字多め</dd>
+          </dl>
+          <button class="btn ghost" style="margin-top:10px;min-height:40px;font-size:13px" onclick="go('s06')">✎ キャスト情報を編集（S-06）</button>
+        </div>
+      </details>
+
+      <div class="card" style="padding:8px 14px">
+        <h2 style="margin:8px 0 2px">下書き・最近の日記</h2>
+        <button class="row" onclick="openResult('draft',0)">
+          <span class="thumb">📝</span>
+          <span><span class="nm" style="font-size:13.5px">雨の日はのんびり…</span><br><span class="badge b-draft">下書き</span></span>
+          <span class="arw">›</span>
+        </button>
+        <button class="row" onclick="goHistory(cur)">
+          <span class="thumb">🌙</span>
+          <span><span class="nm" style="font-size:13.5px">昨日はありがとう🌙</span><br><span class="badge b-post">投稿済</span></span>
+          <span class="arw">›</span>
+        </button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= 生成中 ================= -->
+  <section class="screen" id="sgen">
+    <header class="hd">
+      <h1>日記を生成中 <span class="sid">S-05→S-07</span></h1>
+    </header>
+    <main>
+      <div class="card genwrap">
+        <div class="spin" role="status" aria-label="生成中"></div>
+        <div>
+          <b style="font-size:15px">AIが日記を書いています</b>
+          <p class="hint">目安 60秒以内 ・ キャラ設定と戦略を参照中</p>
+        </div>
+        <div class="skel" aria-hidden="true"><i style="width:62%"></i><i style="width:94%"></i><i style="width:88%"></i><i style="width:71%"></i></div>
+        <button class="btn ghost" style="max-width:220px" onclick="cancelGen()">中止する<span class="note">5秒以内はクレジット消費なし</span></button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= S-07 日記生成結果 ================= -->
+  <section class="screen" id="s07">
+    <header class="hd">
+      <button class="back" onclick="askDraft()" aria-label="戻る">‹</button>
+      <h1>日記生成結果 <span class="sid">S-07</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card stack">
+        <div>
+          <div style="display:flex;align-items:center;margin-bottom:5px">
+            <label class="f" for="dTitle" style="margin:0">タイトル</label>
+            <button class="btn ghost" style="width:auto;min-height:28px;font-size:11.5px;padding:3px 10px;margin-left:auto" onclick="copyPart('dTitle','タイトル')">コピー</button>
+          </div>
+          <input class="in" id="dTitle" value="">
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;margin-bottom:5px">
+            <label class="f" for="dBody" style="margin:0">本文（そのまま手直しできます）</label>
+            <button class="btn ghost" style="width:auto;min-height:28px;font-size:11.5px;padding:3px 10px;margin-left:auto" onclick="copyPart('dBody','本文')">コピー</button>
+          </div>
+          <textarea class="in" id="dBody" rows="9"></textarea>
+        </div>
+        <div id="ngArea"></div>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1" id="regenBtn" onclick="regen()">↻ 再生成 <span class="note num" id="regenLeft">残り5回</span></button>
+          <button class="btn ghost" style="flex:1" onclick="saveDraft()">下書き保存</button>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <div>
+          <label class="f">写真（1枚・10MBまで）</label>
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="thumb" id="phThumb" style="width:64px;height:64px;font-size:24px">📷</div>
+            <label class="btn" style="flex:1;min-height:44px">写真を選ぶ<input type="file" accept="image/*" hidden onchange="pickPhoto(this)"></label>
+          </div>
+          <p class="hint">投稿完了後は自動で圧縮保存し、原本は削除されます</p>
+        </div>
+        <div>
+          <label class="f" for="dWhen">投稿日時 <span class="m1">M1</span>（戦略の提案値が初期表示）</label>
+          <input class="in num" id="dWhen" type="datetime-local" value="2026-07-20T19:40">
+          <p class="hint">予約後も投稿30分前まで変更・取消できます</p>
+        </div>
+        <button class="btn" id="btnReserve" onclick="toast('M1: NGワード検査→確認→予約完了')">予約投稿 <span class="m1">M1</span></button>
+        <div id="schedActions" hidden class="stack">
+          <button class="btn" onclick="toast('M1: 投稿30分前まで日時変更できます')">日時変更 <span class="m1">M1</span></button>
+          <button class="btn danger" onclick="toast('M1: 予約を取消して下書きに戻します')">予約取消 <span class="m1">M1</span></button>
+        </div>
+      </div>
+
+      <div class="fixedbar" id="fixedCopy">
+        <button class="btn primary" style="min-height:54px" onclick="copyFlow()">コピーして投稿手順を表示</button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= S-08 投稿履歴 ================= -->
+  <section class="screen" id="s08">
+    <header class="hd">
+      <button class="back" onclick="go('s03')" aria-label="戻る">‹</button>
+      <h1>投稿履歴 <span class="sid">S-08</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div style="display:flex;gap:10px">
+        <select class="in" id="f08cast" onchange="filterHistory()" aria-label="キャスト絞り込み"><option>全キャスト</option><option>こはる</option><option>りりあ</option><option>ちなつ</option></select>
+        <select class="in" id="f08st" onchange="filterHistory()" aria-label="状態絞り込み"><option>全状態</option><option>予約中</option><option>投稿済</option><option>失敗</option></select>
+      </div>
+      <!-- サムネ絵文字は保存写真（requirements §4-2 S-08・UC-0308）のモック代役 -->
+      <div class="card" style="padding:4px 14px">
+        <button class="row" onclick="openResult('sched',1,'s08')">
+          <span class="thumb">🧋</span>
+          <span style="flex:1;min-width:0"><span class="nm" style="font-size:13.5px">りりあ｜差し入れありがと🧋</span><br>
+            <span class="sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">さっき差し入れでタピオカもらっちゃった…</span>
+            <span class="sub num">7/20 19:40 予約</span> <span class="badge b-sched">投稿予約</span> <span class="m1">M1</span></span>
+          <span class="arw">›</span>
+        </button>
+        <button class="row" onclick="openResult('view',0,'s08')">
+          <span class="thumb">🌙</span>
+          <span style="flex:1;min-width:0"><span class="nm" style="font-size:13.5px">こはる｜昨日はありがとう🌙</span><br>
+            <span class="sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">昨日会いに来てくれた方、ほんとにありがと…</span>
+            <span class="sub num">7/19 21:00 投稿</span> <span class="badge b-post">投稿済</span></span>
+          <span class="arw">›</span>
+        </button>
+        <button class="row" onclick="openResult('view',2,'s08')">
+          <span class="thumb">☀️</span>
+          <span style="flex:1;min-width:0"><span class="nm" style="font-size:13.5px">ちなつ｜おはようの一言☀️</span><br>
+            <span class="sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">おはよう☀️今日も昼からいるやで〜…</span>
+            <span class="sub num">7/19 10:00 投稿</span> <span class="badge b-post">投稿済</span></span>
+          <span class="arw">›</span>
+        </button>
+        <div class="row" style="align-items:flex-start" role="button" tabindex="0" onclick="openResult('view',1,'s08')">
+          <span class="thumb">⚠️</span>
+          <span style="flex:1;min-width:0"><span class="nm" style="font-size:13.5px">りりあ｜今週の出勤予定です</span><br>
+            <span class="sub">理由：媒体へのログイン失敗（パスワード変更の可能性）</span><br>
+            <span class="badge b-fail">投稿失敗</span> <span class="m1">M1</span></span>
+          <button class="btn danger" style="width:auto;min-height:38px;font-size:12.5px;padding:6px 12px"
+            onclick="event.stopPropagation();toast('PW再登録 → 再予約の導線（ダミー）')">再試行</button>
+          <span class="arw">›</span>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= S-09 設定 ================= -->
+  <section class="screen" id="s09">
+    <header class="hd">
+      <button class="back" onclick="go('s03')" aria-label="戻る">‹</button>
+      <h1>設定 <span class="sid">S-09</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card stack">
+        <h2>店舗情報</h2>
+        <div><label class="f" for="shopName">店舗名（表示用）</label><input class="in" id="shopName" value="デモ店舗A"></div>
+        <div><label class="f" for="shopIntro">紹介文</label><textarea class="in" id="shopIntro" rows="2" placeholder="日記生成時に参照されます"></textarea></div>
+      </div>
+      <div class="card stack">
+        <h2>イベント情報（日記生成時に参照）</h2>
+        <div style="display:flex;align-items:center;gap:8px">
+          <dl class="kv" style="font-size:13px;flex:1"><dt>周年祭</dt><dd class="num">8/1〜8/7 ・ 全コース割引</dd></dl>
+          <button class="btn ghost" style="width:auto;min-height:28px;font-size:12px;padding:3px 10px" onclick="toast('イベント編集フォーム（ダミー）')">✎ 編集</button>
+          <button class="btn danger" style="width:auto;min-height:28px;font-size:12px;padding:3px 10px" onclick="toast('イベントを削除しました（ダミー）')">削除</button>
+        </div>
+        <button class="btn ghost" onclick="toast('イベント追加フォーム（ダミー）')">＋ イベントを追加</button>
+      </div>
+      <div class="card stack">
+        <h2>利用媒体</h2>
+        <dl class="kv" style="font-size:13px"><dt>ヘブン</dt><dd>自動コピー（M1で自動投稿）</dd></dl>
+        <button class="btn ghost" onclick="toast('媒体の追加・変更フォーム（ダミー）')">＋ 媒体を追加</button>
+      </div>
+      <div class="card" data-roles="owner">
+        <h2>生成件数（オーナーのみ）
+          <select class="in num" id="genMonthSel" style="width:auto;margin-left:auto;min-height:34px;padding:4px 8px;font-size:13px" onchange="genMonth(this.value)" aria-label="対象月">
+            <option value="2026-07">2026年7月</option><option value="2026-06">2026年6月</option>
+          </select>
+        </h2>
+        <div class="tblwrap">
+          <table class="gen">
+            <thead><tr><th>スタッフ</th><th>キャスト</th><th style="text-align:right">生成</th><th style="text-align:right">投稿</th></tr></thead>
+            <tbody id="genBody">
+              <tr><td>やまだ</td><td>こはる</td><td class="num">18</td><td class="num">16</td></tr>
+              <tr><td>やまだ</td><td>りりあ</td><td class="num">15</td><td class="num">13</td></tr>
+              <tr><td>すずき</td><td>ちなつ</td><td class="num">10</td><td class="num">9</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" data-roles="owner" style="padding:8px 14px">
+        <h2 style="margin:8px 0 2px">スタッフ管理（オーナーのみ）</h2>
+        <div class="row">
+          <span class="ava" style="background:#6a6255">や</span>
+          <span style="flex:1;min-width:0"><span class="nm">やまだ</span><br><span class="sub">staff-yamada@example.com</span></span>
+          <button class="btn" style="width:auto;min-height:34px;font-size:11.5px;padding:4px 8px;white-space:nowrap"
+            onclick="toast('初期パスワードを再発行しました（ダミー）：Qw8x-3rTe')">PW再発行</button>
+          <button class="btn danger" style="width:auto;min-height:34px;font-size:11.5px;padding:4px 8px;white-space:nowrap"
+            onclick="toast('アカウントを停止しました（ダミー）')">停止</button>
+        </div>
+        <div class="row">
+          <span class="ava" style="background:#6a6255">す</span>
+          <span style="flex:1;min-width:0"><span class="nm">すずき</span><br><span class="sub">staff-suzuki@example.com</span></span>
+          <button class="btn" style="width:auto;min-height:34px;font-size:11.5px;padding:4px 8px;white-space:nowrap"
+            onclick="toast('初期パスワードを再発行しました（ダミー）：Zn4c-7vBy')">PW再発行</button>
+          <button class="btn danger" style="width:auto;min-height:34px;font-size:11.5px;padding:4px 8px;white-space:nowrap"
+            onclick="toast('アカウントを停止しました（ダミー）')">停止</button>
+        </div>
+        <p class="hint" style="padding:8px 0 10px">スタッフの追加はホームの「＋ スタッフ追加」（S-02）から。オーナーのパスワード再発行は運営に依頼してください</p>
+      </div>
+      <div class="card stack">
+        <h2>通知用メールアドレス</h2>
+        <div>
+          <input class="in" id="ntfMail" type="email" value="owner-demo@example.com" aria-label="通知用メールアドレス">
+          <p class="hint">投稿失敗・クレジット関連の通知が届きます（初期値はオーナーのメールアドレス）</p>
+        </div>
+      </div>
+      <div class="stack">
+        <button class="btn ghost" onclick="openPw('change','s09')">パスワード変更</button>
+        <button class="btn ghost" onclick="go('s01')">ログアウト</button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= S-02 スタッフ追加（オーナーのみ） ================= -->
+  <section class="screen" id="s02">
+    <header class="hd">
+      <button class="back" onclick="go('s03')" aria-label="戻る">‹</button>
+      <h1>スタッフ追加 <span class="sid">S-02</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card stack">
+        <div>
+          <label class="f" for="stName">表示名（本名は使わない）</label>
+          <input class="in" id="stName" placeholder="例）やまだ">
+        </div>
+        <div>
+          <label class="f" for="stMail">メールアドレス（ログインID）</label>
+          <input class="in" id="stMail" type="email" placeholder="staff@example.com">
+        </div>
+        <button class="btn primary" onclick="issueStaff()">登録して初期パスワードを発行</button>
+        <p class="hint">オーナーのみ操作できます。発行した初期パスワードを本人に渡してください（初回ログイン時に本人による変更が必須になります）</p>
+      </div>
+      <div class="card stack" id="stResult" hidden>
+        <h2>登録しました ✓</h2>
+        <dl class="kv"><dt>ログインID</dt><dd id="stResMail">staff@example.com</dd></dl>
+        <div>
+          <label class="f" for="stPw">初期パスワード（この画面でのみ表示）</label>
+          <div style="display:flex;gap:10px">
+            <input class="in num" id="stPw" readonly value="k7Wm-2xQe-9rTa">
+            <button class="btn" style="width:auto;min-height:44px;white-space:nowrap" onclick="copyText('stPw')">コピー</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= PW変更（共通1枚・初回強制/任意変更で共用） ================= -->
+  <section class="screen" id="spw">
+    <header class="hd">
+      <button class="back" id="pwBack" onclick="go(PW_FROM)" aria-label="戻る">‹</button>
+      <h1>パスワード変更 <span class="sid">共通</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card stack">
+        <p id="pwFirstNote" hidden style="color:var(--ink2)">初回ログインのため、新しいパスワードの設定が必要です。設定するまで他の画面は使えません。</p>
+        <div id="pwCurrent">
+          <label class="f" for="pwCur">現在のパスワード</label>
+          <input class="in" id="pwCur" type="password" autocomplete="current-password">
+        </div>
+        <div>
+          <label class="f" for="pwNew">新しいパスワード（8文字以上）</label>
+          <input class="in" id="pwNew" type="password" autocomplete="new-password">
+        </div>
+        <div>
+          <label class="f" for="pwNew2">新しいパスワード（確認）</label>
+          <input class="in" id="pwNew2" type="password" autocomplete="new-password">
+        </div>
+        <button class="btn primary" onclick="savePw()">変更する</button>
+        <p class="hint">変更すると他の端末のログインは全て無効になります</p>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= S-06 キャスト編集 ================= -->
+  <section class="screen" id="s06">
+    <header class="hd">
+      <button class="back" onclick="openModal('mCastBack')" aria-label="戻る">‹</button>
+      <h1>こはる の編集 <span class="sid">S-06</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card stack">
+        <h2>基本情報（✎で項目ごとに編集）</h2>
+        <div>
+          <div style="display:flex;align-items:center;margin-bottom:5px">
+            <label class="f" for="e-name" style="margin:0">源氏名</label>
+            <button class="btn ghost" style="width:auto;min-height:28px;font-size:12px;padding:3px 10px;margin-left:auto" onclick="editField('e-name')">✎ 編集</button>
+          </div>
+          <input class="in" id="e-name" value="こはる" disabled>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;margin-bottom:5px">
+            <label class="f" for="e-age" style="margin:0">公称年齢</label>
+            <button class="btn ghost" style="width:auto;min-height:28px;font-size:12px;padding:3px 10px;margin-left:auto" onclick="editField('e-age')">✎ 編集</button>
+          </div>
+          <input class="in num" id="e-age" value="21" disabled>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;margin-bottom:5px">
+            <label class="f" for="e-prof" style="margin:0">プロフィール</label>
+            <button class="btn ghost" style="width:auto;min-height:28px;font-size:12px;padding:3px 10px;margin-left:auto" onclick="editField('e-prof')">✎ 編集</button>
+          </div>
+          <textarea class="in" id="e-prof" rows="3" disabled>ゆるふわ癒し系。カフェ巡りとうさぎが好き。</textarea>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;margin-bottom:5px">
+            <label class="f" for="e-chara" style="margin:0">キャラ設定（口調・一人称・NG事項）</label>
+            <button class="btn ghost" style="width:auto;min-height:28px;font-size:12px;padding:3px 10px;margin-left:auto" onclick="editField('e-chara')">✎ 編集</button>
+          </div>
+          <textarea class="in" id="e-chara" rows="3" disabled>語尾のばしがち・一人称は名前・絵文字多め・お酒の話はNG</textarea>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <h2>日記戦略</h2>
+        <div>
+          <div style="display:flex;align-items:center;margin-bottom:5px">
+            <label class="f" for="e-strategy" style="margin:0">方針</label>
+            <button class="btn ghost" style="width:auto;min-height:28px;font-size:12px;padding:3px 10px;margin-left:auto" onclick="editField('e-strategy')">✎ 編集</button>
+          </div>
+          <textarea class="in" id="e-strategy" rows="3" disabled>新規向けに清楚キャラを強化。平日19-22時に1日2本。</textarea>
+          <p class="hint">戦略の修正は手動編集のみ（AIによる再生成はありません）</p>
+        </div>
+        <button class="btn" onclick="openStrategy15('s06')">日記戦略を生成 <span class="m1">M1</span><span class="note num">15クレジット</span></button>
+      </div>
+
+      <div class="card stack">
+        <h2>投稿サイトのログイン情報（ヘブン）</h2>
+        <div>
+          <div style="display:flex;align-items:center;margin-bottom:5px">
+            <label class="f" for="e-pfid" style="margin:0">ログインID</label>
+            <button class="btn ghost" style="width:auto;min-height:28px;font-size:12px;padding:3px 10px;margin-left:auto" onclick="editField('e-pfid')">✎ 編集</button>
+          </div>
+          <input class="in" id="e-pfid" value="koharu_demo01" disabled>
+        </div>
+        <div>
+          <label class="f" for="e-pfpw">パスワード（変更時のみ入力）</label>
+          <input class="in" id="e-pfpw" type="password" placeholder="●●●●●●●●">
+          <p class="hint">登録済みのパスワードは表示できません（暗号化保存・復号は投稿処理のみ）</p>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <h2>本人ログイン</h2>
+        <div class="tglrow">
+          <span style="font-size:14px">キャスト本人のログインを許可</span>
+          <label class="tgl"><input type="checkbox" id="e-selflogin" onchange="toggleSelfLogin(this)"><i></i></label>
+        </div>
+        <div id="selfLoginBox" hidden>
+          <dl class="kv" style="margin-bottom:10px"><dt>ログインID</dt><dd class="num">cast-koharu01</dd></dl>
+          <label class="f" for="e-castpw">初期パスワード（この画面でのみ表示）</label>
+          <div style="display:flex;gap:10px">
+            <input class="in num" id="e-castpw" readonly value="Fp3u-8sKd-4mNe">
+            <button class="btn" style="width:auto;min-height:44px;white-space:nowrap" onclick="copyText('e-castpw')">コピー</button>
+          </div>
+          <p class="hint" style="margin-top:8px">本人はマイページ（S-12）で自分の日記だけ生成・予約できます</p>
+        </div>
+      </div>
+
+      <button class="btn danger" onclick="openModal('mCastDelete')">このキャストを退店（削除）</button>
+
+      <div class="fixedbar"><button class="btn primary" onclick="openModal('mCastSave')">保存する</button></div>
+    </main>
+  </section>
+
+  <!-- ================= S-12 キャストマイページ（キャスト本人） ================= -->
+  <section class="screen" id="s12">
+    <header class="hd">
+      <h1>マイページ（こはる） <span class="sid">S-12</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card">
+        <h2>日記を書く</h2>
+        <label class="f" for="neta12">ネタ（空欄なら 戦略→プロフィール→おまかせ の順で自動）</label>
+        <textarea class="in" id="neta12" rows="2" placeholder="例）今日の出勤、もらった差し入れ"></textarea>
+        <button class="btn primary" style="margin-top:12px" onclick="startGen()">1本生成</button>
+        <p class="hint" style="margin-top:8px">自分の日記だけ生成・予約できます（お店の残りクレジットを消費します）</p>
+      </div>
+      <div class="card stack">
+        <h2>自分のプロフィール</h2>
+        <dl class="kv"><dt>源氏名</dt><dd>こはる</dd><dt>公称年齢</dt><dd class="num">21歳</dd></dl>
+        <div>
+          <label class="f" for="p12-prof">プロフィール</label>
+          <textarea class="in" id="p12-prof" rows="3">ゆるふわ癒し系。カフェ巡りとうさぎが好き。</textarea>
+        </div>
+        <div>
+          <label class="f" for="p12-chara">キャラ設定（口調・一人称・NG事項）</label>
+          <textarea class="in" id="p12-chara" rows="3">語尾のばしがち・一人称は名前・絵文字多め・お酒の話はNG</textarea>
+        </div>
+        <button class="btn" onclick="toast('プロフィールを保存しました（ダミー）')">保存</button>
+      </div>
+      <div class="card" style="padding:8px 14px">
+        <h2 style="margin:8px 0 2px">自分の日記</h2>
+        <button class="row" onclick="openResult('draft',0,'s12')">
+          <span class="thumb">📝</span>
+          <span><span class="nm" style="font-size:13.5px">雨の日はのんびり…</span><br><span class="badge b-draft">下書き</span></span>
+          <span class="arw">›</span>
+        </button>
+        <button class="row" onclick="openResult('view',0,'s12')">
+          <span class="thumb">🌙</span>
+          <span><span class="nm" style="font-size:13.5px">昨日はありがとう🌙</span><br><span class="badge b-post">投稿済</span></span>
+          <span class="arw">›</span>
+        </button>
+      </div>
+      <div class="stack">
+        <button class="btn ghost" onclick="openPw('change','s12')">パスワード変更</button>
+        <button class="btn ghost" onclick="go('s01')">ログアウト</button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= S-11 運営管理（admin・テナント横断） ================= -->
+  <section class="screen" id="s11">
+    <header class="hd">
+      <h1>運営管理 <span class="sid">S-11</span></h1>
+      <button class="demo-pill" onclick="openModal('mNav')">DEMO</button>
+    </header>
+    <main>
+      <div class="card">
+        <h2>店舗一覧</h2>
+        <div class="tblwrap">
+          <table class="gen">
+            <thead><tr><th>店舗</th><th>状態</th><th style="text-align:right">月次残</th><th style="text-align:right">おかわり残</th></tr></thead>
+            <tbody>
+              <tr><td>デモ店舗A</td><td><span class="badge b-post">有効</span></td><td class="num">43</td><td class="num">0</td></tr>
+              <tr><td>デモ店舗B</td><td><span class="badge b-post">有効</span></td><td class="num">12</td><td class="num">18</td></tr>
+              <tr><td>デモ店舗C</td><td><span class="badge b-fail">停止</span></td><td class="num">0</td><td class="num">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>おかわり申請（振込確認後に付与）</h2>
+        <div class="tblwrap">
+          <table class="gen">
+            <thead><tr><th>店舗</th><th style="text-align:right">口数</th><th>申請日</th><th>状態</th></tr></thead>
+            <tbody>
+              <tr><td>デモ店舗A</td><td class="num">60</td><td class="num">7/28</td>
+                <td><button class="btn primary" style="width:auto;min-height:32px;font-size:12px;padding:4px 12px" onclick="grantCredit(this)">付与</button></td></tr>
+              <tr><td>デモ店舗B</td><td class="num">60</td><td class="num">7/21</td><td><span class="badge b-post">付与済</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <h2>店舗を作成（オーナー発行）</h2>
+        <div><label class="f" for="a-shop">店舗名（表示用）</label><input class="in" id="a-shop" placeholder="例）デモ店舗D"></div>
+        <div><label class="f" for="a-mail">オーナーのメールアドレス</label><input class="in" id="a-mail" type="email" placeholder="owner@example.com"></div>
+        <button class="btn primary" onclick="issueOwner()">作成して初期パスワードを発行</button>
+      </div>
+      <div class="card stack" id="ownResult" hidden>
+        <h2>作成しました ✓</h2>
+        <dl class="kv"><dt>ログインID</dt><dd id="ownResMail">owner@example.com</dd></dl>
+        <div>
+          <label class="f" for="ownPw">初期パスワード（この画面でのみ表示）</label>
+          <div style="display:flex;gap:10px">
+            <input class="in num" id="ownPw" readonly value="Vx2r-7pLm-3qWs">
+            <button class="btn" style="width:auto;min-height:44px;white-space:nowrap" onclick="copyText('ownPw')">コピー</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <h2>クレジット手動付与</h2>
+        <div style="display:flex;gap:10px">
+          <select class="in" aria-label="店舗を選択" style="flex:1"><option>デモ店舗A</option><option>デモ店舗B</option><option>デモ店舗C</option></select>
+          <input class="in num" type="number" value="60" style="width:90px" aria-label="口数">
+        </div>
+        <button class="btn" onclick="toast('付与しました（店舗へ完了メールを送信・ダミー）')">付与する</button>
+      </div>
+
+      <button class="btn ghost" onclick="go('s01')">ログアウト</button>
+    </main>
+  </section>
+
+  <!-- ================= 下部ナビ S-10（ロール別出し分け・admin時は非表示） ================= -->
+  <nav class="tab" id="tabbar" hidden>
+    <button data-t="s03" data-roles="owner,staff" class="on" onclick="navGo('s03')"><svg class="ic" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/></svg>ホーム</button>
+    <button data-t="s04" data-roles="owner,staff" onclick="navGo('s04')"><svg class="ic" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 15.5c2.4.3 4.2 1.8 5 4.5"/></svg>キャスト</button>
+    <button data-t="s08" data-roles="owner,staff" onclick="navGo('s08')"><svg class="ic" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>履歴<span class="dot"></span></button>
+    <button data-t="s09" data-roles="owner,staff" onclick="navGo('s09')"><svg class="ic" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6.5h14"/><circle cx="9.5" cy="6.5" r="2"/><path d="M5 12h14"/><circle cx="15" cy="12" r="2"/><path d="M5 17.5h14"/><circle cx="11" cy="17.5" r="2"/></svg>設定</button>
+    <button data-t="s12" data-roles="cast" hidden onclick="go('s12')"><svg class="ic" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/></svg>マイページ</button>
+    <button data-roles="cast" hidden onclick="startGen()"><span class="ic">✎</span>日記を書く</button>
+    <button data-roles="cast" hidden onclick="go('s01')"><span class="ic">⏻</span>ログアウト</button>
+  </nav>
+</div>
+
+<!-- ================= モーダル ================= -->
+<div class="modal" id="mCopy" onclick="if(event.target===this)closeModal('mCopy')">
+  <div class="sheet">
+    <h3>本文をコピーしました ✓</h3>
+    <ol>
+      <li>媒体（ヘブン）の写メ日記投稿ページを開く</li>
+      <li>タイトルと本文を貼り付け</li>
+      <li>写真を添付</li>
+      <li>投稿する（予約投稿の自動化はM1で対応）</li>
+    </ol>
+    <button class="btn primary" onclick="closeModal('mCopy');toast('お疲れさまでした！')">完了</button>
+  </div>
+</div>
+
+<div class="modal" id="mHelp" onclick="if(event.target===this)closeModal('mHelp')">
+  <div class="sheet">
+    <h3>？ ヘルプ</h3>
+    <p style="color:var(--ink2);margin-bottom:10px">基本の流れ: 「日記を書く」→キャスト選択→生成→手直し→コピーして媒体に投稿。</p>
+    <p style="margin-bottom:14px">お問い合わせ: <b>support@example.com</b>（ダミー・返信目安は翌営業日）</p>
+    <button class="btn primary" onclick="closeModal('mHelp')">閉じる</button>
+  </div>
+</div>
+
+<div class="modal" id="mOkawari" onclick="if(event.target===this)closeModal('mOkawari')">
+  <div class="sheet">
+    <h3>おかわり（追加クレジット）<span class="m1">M1</span></h3>
+    <p style="color:var(--ink2);margin-bottom:14px">
+      月次の残りは <b class="num">43本</b>。追加分は振込確認後に付与され、<b>無期限で繰り越せます</b>。申請すると運営に通知が届きます。</p>
+    <button class="btn primary" onclick="closeModal('mOkawari');toast('申請を受け付けました（ダミー）')">60本を申請する</button>
+  </div>
+</div>
+
+<div class="modal" id="mDraft" onclick="if(event.target===this)closeModal('mDraft')">
+  <div class="sheet">
+    <h3>下書きとして保存しますか？</h3>
+    <p style="color:var(--ink2);margin-bottom:14px">下書きは1キャスト1件まで。既存の下書きがある場合は上書きされます。</p>
+    <div class="stack">
+      <button class="btn primary" onclick="closeModal('mDraft');toast('下書きに保存しました');go(RESULT_FROM)">保存して戻る</button>
+      <button class="btn ghost" onclick="closeModal('mDraft');go(RESULT_FROM)">保存せず戻る</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mNav" onclick="if(event.target===this)closeModal('mNav')">
+  <div class="sheet">
+    <h3>デモ操作パネル</h3>
+    <p style="font-size:12.5px;color:var(--ink2);margin-bottom:12px">
+      視点（ロール）を切り替えるか、画面へ直接ジャンプできます。<span class="m1">M1</span> の付いた要素はデモ版（M0）の次のリリースで実装される機能です。データは全て架空です。</p>
+    <div class="rolebar" id="rolebar">
+      <button data-r="owner" class="on" onclick="setRole('owner')">オーナー</button>
+      <button data-r="staff" onclick="setRole('staff')">スタッフ</button>
+      <button data-r="cast" onclick="setRole('cast')">キャスト</button>
+      <button data-r="admin" onclick="setRole('admin')">運営</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s01')">S-01 ログイン</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s02')">S-02 スタッフ追加</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s03')">S-03 メインメニュー</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s04')">S-04 キャスト一覧</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');selectCast(0)">S-05 キャスト情報</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s06')">S-06 キャスト編集</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');openResult('gen')">S-07 日記生成結果</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s08')">S-08 投稿履歴</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s09')">S-09 設定</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s11')">S-11 運営管理</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s12')">S-12 マイページ</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px" onclick="closeModal('mNav');go('s13')">S-13 キャスト登録</button>
+      <button class="btn ghost" style="min-height:44px;font-size:13px;grid-column:1/-1" onclick="closeModal('mNav');openPw('first','s03')">パスワード変更（初回ログイン強制デモ）</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mStrategy15" onclick="if(event.target===this)closeModal('mStrategy15')">
+  <div class="sheet">
+    <h3>日記戦略＋初回日記の作成 <span class="m1">M1</span></h3>
+    <p style="color:var(--ink2);margin-bottom:6px">
+      <b class="num">15クレジット</b>を消費して、プロフィールと過去日記から<b>日記戦略</b>と<b>日記15本（5日分）</b>を作成します。よろしいですか？</p>
+    <p class="hint" style="margin-bottom:14px">実行中の連打による重複消費はできない仕組みです</p>
+    <div class="stack">
+      <button class="btn primary" onclick="s15Yes()">同意して作成する</button>
+      <button class="btn ghost" onclick="s15No()">今はしない</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mCastSave" onclick="if(event.target===this)closeModal('mCastSave')">
+  <div class="sheet">
+    <h3>変更を保存しますか？</h3>
+    <div class="stack">
+      <button class="btn primary" onclick="closeModal('mCastSave');toast('保存しました');go('s05')">保存する</button>
+      <button class="btn ghost" onclick="closeModal('mCastSave')">編集に戻る</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mCastBack" onclick="if(event.target===this)closeModal('mCastBack')">
+  <div class="sheet">
+    <h3>変更を保存しますか？</h3>
+    <p style="color:var(--ink2);margin-bottom:14px">保存せずに戻ると編集内容は破棄されます。</p>
+    <div class="stack">
+      <button class="btn primary" onclick="closeModal('mCastBack');toast('保存しました');go(pendingGo||'s05');pendingGo=null">保存して戻る</button>
+      <button class="btn ghost" onclick="closeModal('mCastBack');go(pendingGo||'s05');pendingGo=null">保存せず戻る</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mCastDelete" onclick="if(event.target===this)closeModal('mCastDelete')">
+  <div class="sheet">
+    <h3>このキャストを退店にしますか？</h3>
+    <p style="color:var(--ink2);margin-bottom:14px">一覧から非表示になります。日記とプロフィールは保持され、投稿用ログイン情報のみ完全に削除されます。</p>
+    <div class="stack">
+      <button class="btn danger" onclick="closeModal('mCastDelete');toast('退店として処理しました（ダミー）');go('s04')">退店（削除）する</button>
+      <button class="btn ghost" onclick="closeModal('mCastDelete')">やめる</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+  const CASTS=[
+    {name:"こはる",suffix:"だよ〜🐰",style:"ゆるふわ"},
+    {name:"りりあ",suffix:"です🖤",style:"おっとり"},
+    {name:"ちなつ",suffix:"やで☺️",style:"姉さん"},
+  ];
+  let cur=0, regenLeft=5, genTimer=null, regenTimer=null;
+  let ROLE="owner", PW_FROM="s09", PW_MODE="change", s15From="s13";
+  let pendingGo=null, RESULT_FROM="s05", RESULT_VIEW=false;
+
+  const VARIANTS=[
+    {t:"雨の日はのんびり☔", b:(c)=>`こんばんは、${c.name}${c.suffix}\n\n今日は朝から雨だね☔\nこういう日はなんだか\nゆっくりモードになっちゃう…\n\nでもね、雨の日って\nお部屋の時間が特別に感じるから\nちょっと好きだったりします☺️\n\n今日も夜までいるので、\n雨宿りがてら会いに来てくれたら\nうれしいなあ🌂\n\n${c.name}より💌`},
+    {t:"差し入れありがとう🧋", b:(c)=>`${c.name}${c.suffix}\n\nさっき差し入れで\nタピオカもらっちゃった🧋✨\n\n甘いの飲むと元気でるタイプなので\nテンションあがってます（笑）\n\n覚えててくれたのが\n一番うれしかったな…☺️\n\n今日もラストまで！\nタイミング合えばぜひ🌙`},
+    {t:"新しい香水にしました🫧", b:(c)=>`こんにちは、${c.name}${c.suffix}\n\n実は昨日、新しい香水を\nおろしました🫧\n\nいつもより甘めの香りだから\n気づいてもらえるかドキドキ…\n\n「変えた？」って言われたら\nたぶんにやけます（笑）\n\n今日の${c.name}は地域No.1の\n上機嫌なので、よかったら\n確かめにきてね☺️`},
+  ];
+  let vIdx=0;
+
+  function go(id){
+    clearTimeout(genTimer); clearTimeout(regenTimer);
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+    document.getElementById(id).classList.add("on");
+    const tb=document.getElementById("tabbar");
+    tb.hidden=(id==="s01"||id==="sgen"||ROLE==="admin"||(id==="spw"&&PW_MODE==="first"));
+    tb.querySelectorAll("button").forEach(b=>{
+      b.hidden=!(b.dataset.roles||"").split(",").includes(ROLE);
+      b.classList.toggle("on",b.dataset.t===id);
+    });
+    window.scrollTo({top:0});
+  }
+  function navGo(id){
+    const curScr=document.querySelector(".screen.on");
+    if(curScr&&curScr.id==="s06"){pendingGo=id;openModal("mCastBack");return;}
+    go(id);
+  }
+  function loginGo(){
+    go(ROLE==="cast" ? "s12" : ROLE==="admin" ? "s11" : "s03");
+  }
+  function setRole(r){
+    ROLE=r;
+    document.querySelectorAll("#rolebar button").forEach(b=>b.classList.toggle("on",b.dataset.r===r));
+    document.getElementById("btnStaffAdd").hidden=(r==="staff");
+    document.querySelectorAll(".screen [data-roles]").forEach(el=>{
+      el.hidden=!(el.dataset.roles||"").split(",").includes(r);
+    });
+    closeModal("mNav");
+    go(r==="cast" ? "s12" : r==="admin" ? "s11" : "s03");
+    toast(({owner:"オーナー",staff:"スタッフ",cast:"キャスト",admin:"運営"})[r]+"の視点に切り替えました");
+  }
+  function setCast(i){
+    cur=i;
+    document.getElementById("castTitle").innerHTML=`${CASTS[i].name} <span class="sid">S-05</span>`;
+    document.getElementById("kvName").textContent=CASTS[i].name;
+  }
+  function selectCast(i){ setCast(i); go("s05"); }
+  function startGen(){
+    go("sgen");
+    genTimer=setTimeout(()=>openResult("gen"),2400);
+  }
+  function cancelGen(){
+    clearTimeout(genTimer);
+    toast("中止しました（クレジット消費なし）");
+    go(ROLE==="cast" ? "s12" : "s05");
+  }
+  function openResult(mode, castIdx, from){
+    clearTimeout(genTimer);
+    if(castIdx!==undefined) setCast(castIdx);
+    RESULT_FROM = from || (ROLE==="cast" ? "s12" : "s05");
+    RESULT_VIEW = (mode==="view"||mode==="sched");
+    regenLeft=5; updateRegen();
+    const v=VARIANTS[vIdx%VARIANTS.length]; vIdx++;
+    document.getElementById("dTitle").value = mode==="draft" ? "雨の日はのんびり☔" : v.t;
+    document.getElementById("dBody").value = mode==="draft" ? VARIANTS[0].b(CASTS[cur]) : v.b(CASTS[cur]);
+    document.getElementById("ngArea").innerHTML="";
+    const sched=(mode==="sched");
+    document.getElementById("schedActions").hidden=!sched;
+    document.getElementById("btnReserve").hidden=sched;
+    document.getElementById("fixedCopy").hidden=sched;
+    go("s07");
+  }
+  function regen(){
+    if(regenLeft<=0) return;
+    regenLeft--; updateRegen();
+    const btn=document.getElementById("regenBtn"); btn.disabled=true;
+    regenTimer=setTimeout(()=>{
+      const v=VARIANTS[vIdx%VARIANTS.length]; vIdx++;
+      document.getElementById("dTitle").value=v.t;
+      document.getElementById("dBody").value=v.b(CASTS[cur]);
+      document.getElementById("ngArea").innerHTML="";
+      btn.disabled=regenLeft<=0;
+      toast("新しい案に更新しました（消費なし）");
+    },1100);
+  }
+  function updateRegen(){
+    document.getElementById("regenLeft").textContent=`残り${regenLeft}回`;
+    document.getElementById("regenBtn").disabled = regenLeft<=0;
+  }
+  function goHistory(i){
+    go("s08");
+    document.getElementById("f08cast").value=CASTS[i].name;
+    filterHistory();
+  }
+  function filterHistory(){
+    const c=document.getElementById("f08cast").value, s=document.getElementById("f08st").value;
+    const map={"予約中":"投稿予約","投稿済":"投稿済","失敗":"投稿失敗"};
+    document.querySelectorAll("#s08 .row").forEach(r=>{
+      const t=r.textContent;
+      r.style.display=((c==="全キャスト"||t.includes(c))&&(s==="全状態"||t.includes(map[s])))?"":"none";
+    });
+  }
+  const GENDATA={
+    "2026-07":[["やまだ","こはる",18,16],["やまだ","りりあ",15,13],["すずき","ちなつ",10,9]],
+    "2026-06":[["やまだ","こはる",22,20],["すずき","りりあ",12,11],["すずき","ちなつ",8,8]],
+  };
+  function genMonth(m){
+    document.getElementById("genBody").innerHTML=GENDATA[m].map(r=>
+      `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[3]}</td></tr>`).join("");
+  }
+  function ngCheck(){
+    const body=document.getElementById("dBody").value;
+    const hits=["地域No.1","日本一","最安値"].filter(w=>body.includes(w));
+    const area=document.getElementById("ngArea");
+    if(hits.length){
+      area.innerHTML=`<div class="ngbox"><b>⚠ NGワード検査：${hits.length}件</b><br>
+        「<mark>${hits[0]}</mark>」は誇大表現にあたる可能性があります。修正するか、このまま続行できます（投稿は止めません）。</div>`;
+      return false;
+    }
+    area.innerHTML="";
+    return true;
+  }
+  function copyFlow(){
+    ngCheck();
+    const t=document.getElementById("dTitle").value, b=document.getElementById("dBody").value;
+    (navigator.clipboard?navigator.clipboard.writeText(`${t}\n\n${b}`):Promise.reject()).catch(()=>{});
+    openModal("mCopy");
+  }
+  function pickPhoto(inp){
+    const f=inp.files&&inp.files[0]; if(!f) return;
+    if(f.size>10*1024*1024){toast("10MBを超えています。別の写真を選んでください");inp.value="";return;}
+    const el=document.getElementById("phThumb");
+    el.innerHTML=`<img src="${URL.createObjectURL(f)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
+    toast("写真を追加しました");
+  }
+  function saveDraft(){toast("下書きに保存しました（1キャスト1件）");}
+  function askDraft(){
+    if(RESULT_VIEW){ go(RESULT_FROM); return; }
+    openModal("mDraft");
+  }
+  function issueStaff(){
+    const m=document.getElementById("stMail").value||"staff@example.com";
+    document.getElementById("stResMail").textContent=m;
+    document.getElementById("stResult").hidden=false;
+    toast("スタッフを登録しました（ダミー）");
+  }
+  function issueOwner(){
+    const m=document.getElementById("a-mail").value||"owner@example.com";
+    document.getElementById("ownResMail").textContent=m;
+    document.getElementById("ownResult").hidden=false;
+    toast("店舗を作成しました（ダミー）");
+  }
+  function copyText(id){
+    const el=document.getElementById(id);
+    (navigator.clipboard?navigator.clipboard.writeText(el.value):Promise.reject()).catch(()=>{});
+    toast("コピーしました");
+  }
+  function copyPart(id,label){
+    const el=document.getElementById(id);
+    (navigator.clipboard?navigator.clipboard.writeText(el.value):Promise.reject()).catch(()=>{});
+    toast(label+"をコピーしました");
+  }
+  function editField(id){
+    const el=document.getElementById(id);
+    el.disabled=false; el.focus();
+  }
+  function toggleSelfLogin(inp){
+    document.getElementById("selfLoginBox").hidden=!inp.checked;
+    if(inp.checked) toast("本人ログインを許可しました（保存で確定）");
+  }
+  function grantCredit(btn){
+    const td=btn.parentElement;
+    td.innerHTML='<span class="badge b-post">付与済</span>';
+    toast("付与しました（店舗へ完了メールを送信・ダミー）");
+  }
+  function openStrategy15(from){s15From=from;openModal("mStrategy15");}
+  function s15Yes(){
+    closeModal("mStrategy15");
+    toast("戦略と日記15本の生成を開始しました（ダミー）");
+    if(s15From!=="s06") selectCast(cur);
+  }
+  function s15No(){
+    closeModal("mStrategy15");
+    if(s15From==="s13"){toast("登録のみ行いました（ダミー）");selectCast(cur);}
+  }
+  function openPw(mode,from){
+    PW_MODE=mode; PW_FROM=from;
+    document.getElementById("pwFirstNote").hidden=(mode!=="first");
+    document.getElementById("pwCurrent").hidden=(mode==="first");
+    document.getElementById("pwBack").style.visibility=(mode==="first")?"hidden":"visible";
+    go("spw");
+  }
+  function savePw(){
+    const a=document.getElementById("pwNew").value, b=document.getElementById("pwNew2").value;
+    if(!a||a.length<8){toast("8文字以上で設定してください");return;}
+    if(a!==b){toast("確認用パスワードが一致しません");return;}
+    toast("パスワードを変更しました（他端末のログインは無効になります）");
+    go(PW_MODE==="first" ? (ROLE==="cast"?"s12":ROLE==="admin"?"s11":"s03") : PW_FROM);
+  }
+  function openModal(id){document.getElementById(id).classList.add("on");}
+  function closeModal(id){document.getElementById(id).classList.remove("on");}
+  let toastT=null;
+  function toast(msg){
+    const el=document.getElementById("toast");
+    el.textContent=msg; el.classList.add("on");
+    clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove("on"),2200);
+  }
+</script>
+</body>
+</html>
